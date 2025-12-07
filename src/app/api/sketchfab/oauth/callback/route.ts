@@ -9,6 +9,8 @@ import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma/client';
 import { getCurrentUser } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     // Extract code and state from query parameters

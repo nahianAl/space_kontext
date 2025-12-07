@@ -25,6 +25,8 @@ function getCacheKey(params: z.infer<typeof SearchQuerySchema>): string {
   return `sketchfab_search:${JSON.stringify(params)}`;
 }
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/sketchfab/search
  * Search for downloadable CC-licensed models
