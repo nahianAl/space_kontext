@@ -46,7 +46,7 @@ uploads/*
 *_archive/
 *_Archive/
 test-data/
-Public/
+# Public/ - commented out to allow public folder to be tracked
 
 # Old planning and guide documents (keep new deployment guides)
 *.plan.md
