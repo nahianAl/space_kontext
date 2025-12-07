@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma/client';
 import { auth, currentUser } from '@clerk/nextjs/server';
-import { getUserByClerkId, upsertUser } from '@/lib/prisma/utils';
+import { upsertUser } from '@/lib/prisma/utils';
 import { z } from 'zod';
 
 const CreateProjectSchema = z.object({
@@ -10,10 +10,14 @@ const CreateProjectSchema = z.object({
 
 /**
  * Get or create user in database from Clerk authentication
+ * Returns the user's database ID
  */
-async function getOrCreateUser(clerkUserId: string) {
+async function getOrCreateUser(clerkUserId: string): Promise<string> {
   // Try to find existing user
-  let user = await getUserByClerkId(clerkUserId);
+  let user = await prisma.user.findUnique({
+    where: { clerkId: clerkUserId },
+    select: { id: true },
+  });
   
   // If user doesn't exist, create it from Clerk data
   if (!user) {
@@ -23,16 +27,18 @@ async function getOrCreateUser(clerkUserId: string) {
     }
 
     // Create user in database
-    user = await upsertUser({
+    const newUser = await upsertUser({
       id: clerkUser.id,
       emailAddresses: clerkUser.emailAddresses.map(e => ({ emailAddress: e.emailAddress })),
       firstName: clerkUser.firstName,
       lastName: clerkUser.lastName,
       imageUrl: clerkUser.imageUrl,
     });
+    
+    return newUser.id;
   }
 
-  return user;
+  return user.id;
 }
 
 export async function GET(request: NextRequest) {
@@ -44,11 +50,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Get or create user in database
-    const user = await getOrCreateUser(clerkUserId);
+    const userId = await getOrCreateUser(clerkUserId);
 
     // Fetch projects for this user
     const projects = await prisma.project.findMany({
-      where: { userId: user.id },
+      where: { userId },
       orderBy: { createdAt: 'desc' },
     });
 
@@ -74,7 +80,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get or create user in database
-    const user = await getOrCreateUser(clerkUserId);
+    const userId = await getOrCreateUser(clerkUserId);
 
     // Validate request body
     const body = await request.json();
@@ -91,7 +97,7 @@ export async function POST(request: NextRequest) {
     const project = await prisma.project.create({
       data: {
         name: validation.data.name,
-        userId: user.id,
+        userId,
       },
     });
 
