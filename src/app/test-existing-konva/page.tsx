@@ -9,8 +9,6 @@ const KonvaCanvas = dynamic(() => import('@/features/floorplan-2d/components/Kon
   loading: () => <div className="p-4">Loading Konva Canvas...</div>,
 });
 
-export const dynamic = 'force-dynamic';
-
 export default function TestExistingKonvaPage() {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
