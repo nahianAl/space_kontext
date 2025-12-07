@@ -21,7 +21,7 @@ import {
   Upload,
   Settings
 } from 'lucide-react';
-// import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs'; // Temporarily disabled for development
+import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs';
 import { cn } from '@/shared/lib/utils';
 
 interface HeaderProps {
@@ -49,9 +49,7 @@ export function Header({
   canRedo = false,
   hasUnsavedChanges = false
 }: HeaderProps) {
-  // const { isSignedIn, user } = useUser(); // Temporarily disabled for development
-  const isSignedIn = true; // Always show as signed in for development
-  const user = { firstName: 'Demo', emailAddresses: [{ emailAddress: 'demo@spacekontext.com' }] }; // Demo user
+  const { isSignedIn, user } = useUser();
   const [searchFocused, setSearchFocused] = useState(false);
 
   return (
@@ -188,29 +186,26 @@ export function Header({
                 {user?.emailAddresses[0]?.emailAddress}
               </p>
             </div>
-            {/* <UserButton
+            <UserButton
               appearance={{
                 elements: {
                   avatarBox: 'w-8 h-8',
                 },
               }}
-            /> */}
-            <div className="w-8 h-8 bg-architectural-blue rounded-full flex items-center justify-center text-white text-sm font-bold">
-              D
-            </div>
+            />
           </div>
         ) : (
           <div className="flex items-center space-x-2">
-            {/* <SignInButton mode="modal"> */}
-              <Button variant="outline" size="sm" onClick={() => window.location.href = '/dashboard'}>
+            <SignInButton mode="modal">
+              <Button variant="outline" size="sm">
                 Sign In
               </Button>
-            {/* </SignInButton> */}
-            {/* <SignUpButton mode="modal"> */}
-              <Button size="sm" className="bg-architectural-blue hover:bg-architectural-blue/90" onClick={() => window.location.href = '/dashboard'}>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <Button size="sm" className="bg-architectural-blue hover:bg-architectural-blue/90">
                 Get Started
               </Button>
-            {/* </SignUpButton> */}
+            </SignUpButton>
           </div>
         )}
       </div>

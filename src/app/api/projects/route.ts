@@ -1,29 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma/client';
-import { getCurrentUser } from '@/lib/auth';
-import { getUserByClerkId } from '@/lib/prisma/utils';
+import { auth, currentUser } from '@clerk/nextjs/server';
+import { getUserByClerkId, upsertUser } from '@/lib/prisma/utils';
 import { z } from 'zod';
 
 const CreateProjectSchema = z.object({
   name: z.string().min(1).max(255),
 });
 
+/**
+ * Get or create user in database from Clerk authentication
+ */
+async function getOrCreateUser(clerkUserId: string) {
+  // Try to find existing user
+  let user = await getUserByClerkId(clerkUserId);
+  
+  // If user doesn't exist, create it from Clerk data
+  if (!user) {
+    const clerkUser = await currentUser();
+    if (!clerkUser) {
+      throw new Error('Unable to fetch user data from Clerk');
+    }
+
+    // Create user in database
+    user = await upsertUser({
+      id: clerkUser.id,
+      emailAddresses: clerkUser.emailAddresses.map(e => ({ emailAddress: e.emailAddress })),
+      firstName: clerkUser.firstName,
+      lastName: clerkUser.lastName,
+      imageUrl: clerkUser.imageUrl,
+    });
+  }
+
+  return user;
+}
+
 export async function GET(request: NextRequest) {
   try {
     // Check authentication
-    const clerkUserId = await getCurrentUser();
+    const { userId: clerkUserId } = await auth();
     if (!clerkUserId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Find user in database by Clerk ID
-    const user = await getUserByClerkId(clerkUserId);
-    if (!user) {
-      return NextResponse.json(
-        { error: 'User not found. Please sign out and sign in again.' },
-        { status: 404 }
-      );
-    }
+    // Get or create user in database
+    const user = await getOrCreateUser(clerkUserId);
 
     // Fetch projects for this user
     const projects = await prisma.project.findMany({
@@ -47,19 +68,13 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
-    const clerkUserId = await getCurrentUser();
+    const { userId: clerkUserId } = await auth();
     if (!clerkUserId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Find user in database by Clerk ID
-    const user = await getUserByClerkId(clerkUserId);
-    if (!user) {
-      return NextResponse.json(
-        { error: 'User not found. Please sign out and sign in again.' },
-        { status: 404 }
-      );
-    }
+    // Get or create user in database
+    const user = await getOrCreateUser(clerkUserId);
 
     // Validate request body
     const body = await request.json();

@@ -1,12 +1,10 @@
 'use client';
 
 import { Button } from '@/shared/components/ui/button';
-// import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs'; // Temporarily disabled for development
+import { SignInButton, SignUpButton, UserButton, useUser } from '@clerk/nextjs';
 
 export function Header() {
-  // const { isSignedIn, user } = useUser(); // Temporarily disabled for development
-  const isSignedIn = true; // Always show as signed in for development
-  const user = { firstName: 'Demo', emailAddresses: [{ emailAddress: 'demo@spacekontext.com' }] }; // Demo user
+  const { isSignedIn, user } = useUser();
 
   return (
     <header className="architectural-header">
@@ -30,29 +28,26 @@ export function Header() {
             <span className="text-sm text-muted-foreground">
               Welcome, {user?.firstName || user?.emailAddresses[0]?.emailAddress}
             </span>
-            {/* <UserButton 
+            <UserButton 
               appearance={{
                 elements: {
                   avatarBox: 'w-8 h-8',
                 },
               }}
-            /> */}
-            <div className="w-8 h-8 bg-architectural-blue rounded-full flex items-center justify-center text-white text-sm font-bold">
-              D
-            </div>
+            />
           </>
         ) : (
           <>
-            {/* <SignInButton mode="modal"> */}
-              <Button variant="outline" size="sm" onClick={() => window.location.href = '/dashboard'}>
+            <SignInButton mode="modal">
+              <Button variant="outline" size="sm">
                 Sign In
               </Button>
-            {/* </SignInButton> */}
-            {/* <SignUpButton mode="modal"> */}
-              <Button size="sm" onClick={() => window.location.href = '/dashboard'}>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <Button size="sm">
                 Get Started
               </Button>
-            {/* </SignUpButton> */}
+            </SignUpButton>
           </>
         )}
       </nav>
