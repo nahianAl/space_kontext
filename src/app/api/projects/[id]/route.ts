@@ -1,15 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@/lib/prisma/generated';
-
-// Create Prisma client instance
-const prisma = new PrismaClient({
-  log: ['query', 'error', 'warn'],
-  datasources: {
-    db: {
-      url: 'postgresql://jjc4@localhost:5432/space_kontext?search_path=app',
-    },
-  },
-});
+import { prisma } from '@/lib/prisma/client';
 
 export async function GET(
   request: NextRequest,
