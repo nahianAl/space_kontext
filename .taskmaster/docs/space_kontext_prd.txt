@@ -1,0 +1,1194 @@
+<context>
+# Overview  
+**Architectural Design Web-App** is a web-based tool for architects to create early-stage conceptual designs with real-world site intelligence. The product combines geospatial data, 2D floorplan editing, automatic 3D generation, and sun analysis in a unified platform.
+
+**Problem it solves:**
+- Current tools require multiple disconnected applications (GIS software, CAD, 3D modeling, sun studies)
+- Manual 3D modeling is time-consuming and tedious
+- Site context is often ignored in early design phases
+- Expensive software with steep learning curves
+- Difficult to iterate quickly on design concepts
+
+**Target users:**
+- Small/medium architecture firms (2-20 people)
+- Freelance architects
+- Architecture students
+- Design enthusiasts planning custom homes
+
+**Value proposition:**
+- All-in-one platform for conceptual design
+- Automatic 3D generation from 2D floorplans (unique innovation)
+- Free geospatial data integration
+- Web-based (no installation)
+- Fast iteration on design concepts
+- Affordable pricing ($0 for basic, $29/mo for pro)
+
+**Success metrics:**
+- 1,000 users within first year
+- 5% free-to-paid conversion
+- Users can complete site analysis → floorplan → 3D workflow
+- $0 infrastructure cost using free tiers
+
+# Core Features  
+
+## Feature 1: Site Analysis & Geospatial Data
+**What it does:**
+- User selects site location by drawing boundary on interactive map
+- System automatically fetches real-world data:
+  - Sun path (suncalc.js - free)
+  - Weather patterns (Open-Meteo API - free)
+  - Topography/elevation (Open-Elevation API - free)
+  - Soil composition (SoilGrids API - free)
+  - Context buildings (OpenStreetMap Overpass - free)
+- All data visualized as map overlays
+- Data cached for offline use
+
+**Why it's important:**
+- Brings real-world context into design from day one
+- Eliminates manual site research (saves hours)
+- Makes site-responsive design the default, not an afterthought
+- All APIs are free (no cost scaling issues)
+
+**How it works:**
+1. User draws polygon on Leaflet map
+2. System calculates center coordinates
+3. Parallel API calls fetch all geospatial data
+4. Data stored in PostgreSQL cache
+5. Rendered as interactive map layers
+6. User can toggle layers on/off
+
+**Technical details:**
+- Leaflet + OpenStreetMap for mapping (free)
+- Nominatim for geocoding (free)
+- 5 external API integrations
+- PostgreSQL cache with expiry times
+- GeoJSON data format
+
+## Feature 2: 2D Floorplan Editor
+**What it does:**
+- Canvas-based floorplan drawing with intuitive tools
+- Drawing tools: walls, doors, windows, openings
+- Object library: drag-and-drop furniture, fixtures, appliances
+- Multi-floor support with floor navigation
+- Snap-to-grid with adjustable grid size
+- Undo/redo system
+- Two modes:
+  - Edit Mode: Draw and modify
+  - View Mode: See floorplan with site overlays (sun path, wind)
+
+**Why it's important:**
+- Floorplans are the foundation of architectural design
+- Must be fast and intuitive (UX inspiration: Rayon Design)
+- Bridge between site analysis and 3D generation
+- Enable rapid iteration
+
+**How it works:**
+1. Fabric.js canvas with custom drawing tools
+2. Tool manager pattern (wall tool, door tool, etc.)
+3. Each tool handles mouse events (click, move, drag)
+4. Objects snap to grid for precision
+5. Data serialized to vector format (not pixels)
+6. Saved to file storage (S3/R2) in MessagePack format
+7. View mode overlays site data on floorplan
+
+**Technical details:**
+- Fabric.js 6.x for canvas rendering
+- Custom tool system (WallTool, DoorTool, etc.)
+- Vector-based data model (not raster)
+- Zustand store for canvas state
+- MessagePack serialization for efficiency
+- Multi-floor management with stacking
+
+## Feature 3: Automatic 3D Model Generation & Editing
+**What it does:**
+- Automatically generates 3D model from 2D floorplans
+- Walls extruded to height
+- Doors/windows cut into walls
+- Multi-story buildings stacked correctly
+- Two modes:
+  - Edit Mode: Basic SketchUp-like tools (push/pull, move, rotate)
+  - View Mode: Real-time sun simulation with shadows
+- Sun position based on date/time/location
+- Animate sun path through the day
+- Export to GLTF, OBJ formats
+
+**Why it's important:**
+- **Key differentiator**: Instant 3D without manual modeling
+- Saves hours of tedious 3D work
+- See spatial relationships immediately
+- Understand sun impact on design
+- Share 3D models with clients instantly
+
+**How it works:**
+1. Read 2D floorplan vector data
+2. Convert walls to 3D geometry (extrusion)
+3. Stack floors vertically by height
+4. Cut openings for doors/windows
+5. Generate floor slabs and ceilings
+6. Apply materials (PBR)
+7. Position directional light based on sun calculation
+8. Enable shadow mapping
+9. Render with Three.js
+
+**Technical details:**
+- Three.js r160+ for 3D rendering
+- Custom 2D→3D converter algorithm
+- OrbitControls for camera
+- TransformControls for editing
+- Shadow mapping with directional light
+- suncalc.js for sun position
+- Web Workers for heavy geometry calculations
+- LOD (Level of Detail) for performance
+
+## Feature 4: Massing Diagrams & Sun Studies
+**What it does:**
+- Create volumetric massing studies with primitive shapes
+- Tools: box, cylinder, sphere, custom extrusions
+- Transform shapes (move, rotate, scale)
+- Analysis dashboard:
+  - Total volume
+  - Surface area
+  - Floor area ratio (FAR)
+  - Building coverage ratio
+- Sun analysis on massing shapes
+- Seasonal shadow studies
+- Place massing on site with context
+
+**Why it's important:**
+- Early-stage design often starts with massing, not detailed plans
+- Quick exploration of building volumes
+- Understand zoning constraints
+- See shadow impact on surroundings
+- Communicate concepts to stakeholders
+
+**How it works:**
+1. Reuse Three.js engine from Feature 3
+2. Create primitive geometries
+3. Calculate volume from geometry
+4. Apply sun simulation (same as Feature 3)
+5. Show shadows on site and context buildings
+6. Export analysis report
+
+**Technical details:**
+- Reuses Three.js infrastructure
+- Simple geometric primitives
+- Volume/area calculations
+- Same lighting system as Feature 3
+- Placed on site boundary from Feature 1
+
+# User Experience  
+
+## User Personas
+
+### Persona 1: Emily - Small Firm Architect
+- **Age:** 32, Principal at 10-person firm
+- **Goals:** Quickly explore design concepts, present to clients
+- **Pain points:** Current tools too complex for conceptual work
+- **How our app helps:** Fast concept creation, instant 3D visualizations
+
+### Persona 2: Alex - Architecture Student  
+- **Age:** 23, Graduate student
+- **Goals:** Complete studio projects, learn site-responsive design
+- **Pain points:** Expensive software, steep learning curve
+- **How our app helps:** Free/affordable, easy to learn, built-in site analysis
+
+### Persona 3: David - Design Enthusiast
+- **Age:** 45, Planning custom home
+- **Goals:** Visualize dream home, understand site implications
+- **Pain points:** Can't afford architect for early concepts
+- **How our app helps:** Intuitive interface, see home in 3D on actual lot
+
+## Key User Flows
+
+### Flow 1: Complete Project Workflow (Core Value)
+1. Sign up / Log in
+2. Create new project
+3. **Feature 1:** Select site on map, draw boundary
+4. System fetches geospatial data automatically
+5. Review site data (sun, weather, topography, context)
+6. **Feature 2:** Switch to 2D Floorplan tab
+7. Draw floorplan (walls, doors, windows)
+8. Add furniture from library
+9. Toggle View Mode to see sun path on floorplan
+10. **Feature 3:** Click "Generate 3D"
+11. 3D model appears instantly
+12. View sun simulation, see shadows
+13. Edit 3D if needed (push/pull walls)
+14. **Feature 4:** Create massing study for alternatives
+15. Export 3D model, export site analysis report
+16. Save project
+
+**Critical path:** Steps 3-4-7-10 must work seamlessly
+
+### Flow 2: Quick Massing Study
+1. Log in
+2. Open existing project (or create new)
+3. Go to Massing tab
+4. Create box shapes on site
+5. Adjust dimensions
+6. Run sun analysis
+7. See shadow impact
+8. Export analysis
+
+### Flow 3: Iterative Design
+1. Open existing project
+2. Modify 2D floorplan (add room)
+3. Auto-regenerate 3D
+4. Check sun impact in View Mode
+5. Iterate quickly
+
+## UI/UX Considerations
+
+**Design principles:**
+- **Simplicity over features:** Clean, minimal interface
+- **Progressive disclosure:** Show advanced options only when needed
+- **Immediate feedback:** Real-time updates, no waiting
+- **Context preservation:** Remember user's last view, tool selection
+- **Responsive:** Desktop-first, but mobile-friendly viewing
+
+**Navigation structure:**
+```
+Header:
+- Logo
+- Project name
+- Feature tabs: Site | Floorplan | 3D | Massing
+- User menu
+
+Left Sidebar (context-aware):
+- Tools for current feature
+- Properties panel
+- Layer toggles
+
+Main Canvas:
+- Rendering area (map/canvas/3D)
+- Mode toggle (Edit/View)
+- View controls (zoom, pan, fit)
+
+Right Sidebar:
+- Object library (Feature 2)
+- Analysis results (Feature 1, 4)
+- Settings
+```
+
+**Color scheme:**
+- Primary: #3B82F6 (blue - trust, professional)
+- Secondary: #10B981 (green - environment, sustainable)
+- Neutral: #F3F4F6, #1F2937 (clean, modern)
+- Accent: #FDB813 (sun path, highlights)
+
+**Inspiration:**
+- Floorplan editor: Rayon Design (clean, fast, minimal)
+- 3D viewer: SketchUp (simple tools, intuitive)
+- Overall: Figma (modern, web-native feel)
+</context>
+
+<PRD>
+# Technical Architecture  
+
+## System Components
+
+### Frontend (Vercel)
+```
+Next.js 14 Application
+├── App Router (React 18 + TypeScript)
+├── Feature Modules
+│   ├── Site Analysis (Leaflet integration)
+│   ├── Floorplan 2D (Fabric.js integration)
+│   ├── Model 3D (Three.js integration)
+│   └── Massing (Three.js reuse)
+├── Rendering Engines (isolated)
+│   ├── GeoEngine (Leaflet wrapper)
+│   ├── CanvasEngine (Fabric.js wrapper)
+│   └── ThreeEngine (Three.js wrapper)
+├── State Management (Zustand)
+└── UI Components (Tailwind + shadcn/ui)
+```
+
+### Backend (Railway + Vercel Serverless)
+```
+API Routes (Next.js)
+├── Authentication (Clerk SDK)
+├── Project CRUD
+├── File Operations (S3/R2)
+├── Geospatial Data (API proxies)
+└── Payment Webhooks (Stripe)
+
+Database (PostgreSQL)
+├── Users
+├── Projects (metadata)
+├── Site Data Cache
+├── Assets
+└── Subscriptions
+
+File Storage (Cloudflare R2 / AWS S3)
+├── Project Files (.msgpack)
+├── User Assets
+└── Exports
+```
+
+### External Services (Free Tiers)
+- OpenStreetMap (maps)
+- Nominatim (geocoding)
+- Open-Meteo (weather)
+- OpenStreetMap Overpass (buildings)
+- SoilGrids (soil data)
+- Open-Elevation (topography)
+- suncalc.js (sun calculations - client-side)
+
+## Data Models
+
+### Project Data (File Storage)
+```typescript
+interface ProjectData {
+  version: string;
+  metadata: ProjectMetadata;
+  site: SiteData;
+  floorplans: FloorplanData[];
+  model3d: Model3DData | null;
+  massing: MassingData | null;
+}
+
+interface SiteData {
+  location: { lat, lng, boundary };
+  climate: { sunPath, weather };
+  terrain: { elevation, soil };
+  context: { buildings, streets };
+}
+
+interface FloorplanData {
+  id, name, level, height;
+  vectors: { walls, doors, windows };
+  objects: PlacedObject[];
+  metadata: { area, perimeter };
+}
+
+interface Model3DData {
+  source: 'auto-generated' | 'manual-edit';
+  geometry: ThreeJSGeometry;
+  materials: Material3D[];
+  floorplanMapping: Record<string, GeometryIDs>;
+}
+```
+
+### Database Schema (PostgreSQL)
+```sql
+users (id, email, name, auth_provider_id, subscription_tier)
+projects (id, user_id, name, data_file_url, data_version)
+project_versions (id, project_id, version, data_file_url)
+site_data_cache (id, project_id, data_type, data, expires_at)
+assets (id, user_id, type, file_url, metadata)
+subscriptions (id, user_id, stripe_subscription_id, tier)
+```
+
+## APIs and Integrations
+
+### Internal APIs (Next.js Routes)
+```
+POST   /api/projects              Create project
+GET    /api/projects              List user projects
+GET    /api/projects/:id          Get project
+PATCH  /api/projects/:id          Update project
+DELETE /api/projects/:id          Delete project
+
+GET    /api/site/sun-path         Proxy to suncalc.js
+GET    /api/site/weather          Proxy to Open-Meteo
+GET    /api/site/buildings        Proxy to Overpass
+GET    /api/site/elevation        Proxy to Open-Elevation
+
+POST   /api/upload                Presigned URL for S3/R2
+GET    /api/download/:id          Get file from S3/R2
+
+POST   /api/stripe/webhook        Handle Stripe events
+```
+
+### External API Integrations
+- All geospatial APIs are free and require no authentication
+- Rate limiting handled with caching
+- Fallback mechanisms for API failures
+
+## Infrastructure Requirements
+
+### Development
+- Local PostgreSQL (or Railway dev environment)
+- Node.js 18+
+- Vercel CLI
+- Git
+
+### Production
+- Vercel (frontend hosting) - Free tier
+- Railway (PostgreSQL) - $5/month
+- Cloudflare R2 or AWS S3 - Pay-as-you-go (~$5-10/month)
+- Clerk (auth) - Free tier (10K MAU)
+- Stripe (payments) - Transaction fees only
+
+**Target cost: $10-20/month for 1K users**
+
+# Development Roadmap  
+
+## Phase 0: Foundation (MVP Infrastructure)
+**Goal:** Set up core infrastructure so we can build features on top
+
+**Scope:**
+- Next.js 14 project with TypeScript
+- Feature-based folder structure
+- Authentication with Clerk (sign up, login, protected routes)
+- PostgreSQL database with Prisma ORM
+- Basic database schema (users, projects)
+- File storage setup (S3/R2)
+- Project CRUD operations (create, list, open, delete)
+- Basic UI layout (header, sidebar, main area)
+- Deployment to Vercel
+- CI/CD pipeline (GitHub → Vercel)
+
+**Deliverables:**
+- User can sign up and log in
+- User can create/delete projects
+- Projects save to database
+- Can deploy to production
+
+**Why this first:**
+- Foundation for all other features
+- Can't build features without auth and storage
+- Need deployment pipeline early
+
+## Phase 1: Site Analysis (First Visible Feature)
+**Goal:** User can select a site and see real-world data
+
+**Scope:**
+- Leaflet map integration with OpenStreetMap tiles
+- Site selection tool (draw polygon on map)
+- Geocoding (address search)
+- Sun path overlay (suncalc.js + visualization)
+- Weather data integration (Open-Meteo API)
+- Context buildings (OSM Overpass API)
+- Topography overlay (contour lines)
+- Soil data display
+- Layer toggles (show/hide overlays)
+- Data caching in PostgreSQL
+- Save site data to project
+
+**Deliverables:**
+- User can draw site boundary
+- All geospatial data displays correctly
+- Data cached for performance
+- Site data saves with project
+
+**Why this second:**
+- First user-visible feature
+- Independent (doesn't depend on other features)
+- Provides value immediately
+- Validates geospatial API integrations
+
+## Phase 2: 2D Floorplan Editor (Core Feature)
+**Goal:** User can draw floorplans with professional tools
+
+**Scope:**
+- Fabric.js canvas integration
+- Grid system with snap-to-grid
+- Drawing tools:
+  - Wall tool (click-to-create, thickness, snapping)
+  - Door tool (placement on walls, swing visualization)
+  - Window tool (placement on walls, sizing)
+  - Opening tool
+- Object library:
+  - Basic furniture (bed, sofa, table, chair)
+  - Fixtures (toilet, sink, bathtub)
+  - Appliances (refrigerator, stove)
+  - Drag-and-drop from library
+- Selection tool (select, move, rotate, delete)
+- Multi-floor management (add/delete floors, navigation)
+- Undo/redo system
+- View Mode: Overlay site data on floorplan (sun path, wind)
+- Data serialization (Fabric.js → vector format)
+- Save/load floorplans
+- Export to PDF, PNG
+
+**Deliverables:**
+- User can draw complete floorplans
+- Tools work intuitively (like Rayon)
+- Multi-floor buildings supported
+- Can see site context in View Mode
+- Data persists correctly
+
+**Why this third:**
+- Core value proposition
+- Longest feature (most complex)
+- Foundation for 3D generation
+- User can create complete designs
+
+## Phase 3: 3D Model Generation (Key Differentiator)
+**Goal:** Automatic 3D generation from 2D floorplans
+
+**Scope:**
+- Three.js scene setup
+- 2D→3D conversion algorithm:
+  - Wall extrusion from paths
+  - Door/window cutouts
+  - Floor slab generation
+  - Ceiling generation
+  - Multi-floor stacking
+- Material system (basic materials: wall, floor, glass, wood)
+- Camera controls (orbit, zoom, pan, predefined views)
+- Edit Mode:
+  - Transform controls (move, rotate, scale)
+  - Push/pull tool for basic editing
+- View Mode:
+  - Sun simulation (suncalc.js integration)
+  - Directional light positioned by sun
+  - Shadow rendering
+  - Time-of-day animation
+  - Seasonal sun path
+- Export to GLTF, OBJ
+- Performance optimization (LOD, Web Workers)
+
+**Deliverables:**
+- 3D generates automatically from any floorplan
+- Geometry is accurate (walls, openings, floors)
+- Sun simulation works realistically
+- Performance is acceptable (>30 FPS)
+- Can export 3D models
+
+**Why this fourth:**
+- Depends on Phase 2 (needs floorplan data)
+- Key differentiator of the product
+- High-value feature for users
+- Completes core user flow
+
+## Phase 4: Massing Diagrams (Additional Value)
+**Goal:** Quick volumetric studies for early-stage design
+
+**Scope:**
+- Primitive shape creation (box, cylinder, sphere)
+- Shape transformation (move, rotate, scale)
+- Volume calculations
+- Surface area calculations
+- Floor area ratio (FAR)
+- Building coverage ratio
+- Sun analysis on massing (reuse from Phase 3)
+- Place massing on site boundary
+- Show context buildings
+- Export analysis report (PDF)
+
+**Deliverables:**
+- User can create massing studies
+- Calculations are accurate
+- Sun analysis works
+- Can export analysis
+
+**Why this fifth:**
+- Reuses Three.js engine (easy)
+- Independent feature
+- Provides additional value
+- Quick to implement
+
+## Phase 5: Integration & Polish
+**Goal:** All features work together seamlessly
+
+**Scope:**
+- Cross-feature data synchronization:
+  - Site data → 2D View Mode overlay
+  - 2D floorplan → 3D auto-generation
+  - Changes in 2D → auto-update 3D
+- Feature navigation (tabs, deep linking)
+- Project versioning (save versions, rollback)
+- Auto-save (debounced)
+- Loading states and progress indicators
+- Error handling and user feedback
+- Performance optimization across features
+- Bug fixes from user testing
+- UI/UX refinements
+
+**Deliverables:**
+- Seamless flow between features
+- Data syncs correctly
+- No data loss
+- Good user experience
+
+**Why this sixth:**
+- Needs all features built first
+- Ensures features work together
+- Improves user experience
+- Prepares for launch
+
+## Phase 6: Payments & Monetization
+**Goal:** Enable subscription-based revenue
+
+**Scope:**
+- Stripe integration
+- Subscription tiers:
+  - Free: 3 projects, basic features
+  - Pro ($29/mo): Unlimited projects, exports, no watermarks
+  - Team ($99/mo/user): Collaboration features
+- Checkout flow
+- Billing portal (Stripe Customer Portal)
+- Feature gating (check tier on feature access)
+- Usage tracking
+- Upgrade prompts
+
+**Deliverables:**
+- User can subscribe
+- Feature gating works
+- Billing portal accessible
+- Revenue tracking
+
+**Why this seventh:**
+- Not needed for MVP testing
+- Can validate product first
+- Add when ready to monetize
+
+## Phase 7: File & Asset Management
+**Goal:** Better project and asset management
+
+**Scope:**
+- User asset library (upload custom furniture/fixtures)
+- Asset categorization and search
+- Project templates (starter templates)
+- Project duplication
+- Project export (full project download)
+- Project import
+- Storage optimization (compression, cleanup)
+- Storage quota enforcement
+
+**Deliverables:**
+- User can upload custom assets
+- Can create templates
+- Can export/import projects
+
+**Why this eighth:**
+- Nice-to-have features
+- Not critical for MVP
+- Add based on user requests
+
+## Phase 8: Polish & Optimization
+**Goal:** Production-ready quality
+
+**Scope:**
+- UI/UX refinement (user testing feedback)
+- Performance optimization (bundle size, rendering)
+- Accessibility (keyboard navigation, screen readers, ARIA)
+- Bug fixes (all known issues)
+- Browser compatibility testing
+- Mobile responsive improvements
+- Documentation (user guides, help system)
+- Onboarding flow (product tour)
+- Tooltips and help text
+
+**Deliverables:**
+- Polished, professional UI
+- Fast performance
+- Accessible
+- Comprehensive help
+
+**Why this ninth:**
+- Final polish before launch
+- Based on user feedback
+- Ensures quality
+
+## Phase 9: Launch Preparation
+**Goal:** Ready for public launch
+
+**Scope:**
+- Security audit
+- Monitoring setup (Sentry, Vercel Analytics)
+- Backup strategy (automated backups, disaster recovery)
+- Legal documents (Terms of Service, Privacy Policy)
+- Marketing assets (landing page, demo video)
+- Beta testing (soft launch to 50 users)
+- Production deployment checklist
+- Support system (help docs, email support)
+
+**Deliverables:**
+- Secure, production-ready
+- Monitoring and alerts working
+- Legal compliance complete
+- Successful launch
+
+**Why this last:**
+- Final steps before going live
+- Ensures security and compliance
+- Prepares for user growth
+
+# Logical Dependency Chain
+
+## Critical Path (Must Build in This Order)
+
+### Layer 1: Foundation (Can't build anything without this)
+```
+Phase 0: Foundation
+- Authentication (Clerk)
+- Database (PostgreSQL + Prisma)
+- Project CRUD
+- File storage (S3/R2)
+- Basic UI shell
+```
+**Why first:** Everything depends on auth, storage, and basic project management
+
+### Layer 2: First Feature (Prove concept, independent)
+```
+Phase 1: Site Analysis
+- Leaflet map
+- Geospatial APIs
+- Data visualization
+```
+**Why second:** 
+- First user-visible value
+- Doesn't depend on other features
+- Validates technical approach
+- Can ship this alone for feedback
+
+### Layer 3: Core Design Tool (Main value)
+```
+Phase 2: 2D Floorplan Editor
+- Fabric.js canvas
+- Drawing tools
+- Object library
+- Multi-floor support
+```
+**Why third:**
+- Core product value
+- Foundation for 3D generation
+- Most complex feature (needs time)
+- Must be solid before moving forward
+
+### Layer 4: Key Differentiator (Depends on Layer 3)
+```
+Phase 3: 3D Model Generation
+- Three.js integration
+- 2D→3D converter (REQUIRES floorplan data from Phase 2)
+- Sun simulation
+```
+**Why fourth:**
+- DEPENDS on Phase 2 (needs floorplan data)
+- Key differentiator
+- Completes core user flow (site → 2D → 3D)
+
+### Layer 5: Additional Value (Reuses Layer 4)
+```
+Phase 4: Massing Diagrams
+- Reuse Three.js engine from Phase 3
+- Simple geometric shapes
+- Analysis calculations
+```
+**Why fifth:**
+- Can reuse 3D infrastructure
+- Quick to build
+- Independent additional feature
+
+### Layer 6: Integration (Needs all features built)
+```
+Phase 5: Integration & Polish
+- Feature synchronization
+- Cross-feature data flow
+- UI refinements
+```
+**Why sixth:**
+- REQUIRES all features exist
+- Makes features work together
+- Final user experience improvements
+
+### Layer 7: Business (Not needed for MVP)
+```
+Phase 6: Payments
+Phase 7: Asset Management
+Phase 8: Polish
+Phase 9: Launch Prep
+```
+**Why last:**
+- Not needed to validate product
+- Can add after user testing
+- Business infrastructure comes after product validation
+
+## Minimum Viable Product (MVP) Definition
+
+**MVP = Phases 0-3 working end-to-end**
+
+A user can:
+1. Sign up / Log in (Phase 0)
+2. Create a project (Phase 0)
+3. Select a site and see geospatial data (Phase 1)
+4. Draw a 2D floorplan (Phase 2)
+5. Generate a 3D model automatically (Phase 3)
+6. See sun simulation on the 3D model (Phase 3)
+7. Save and reload their project (Phase 0)
+
+**This proves the core value proposition:**
+- Site-responsive design workflow
+- Automatic 3D generation (key innovation)
+- All in one web app
+
+**Can launch MVP without:**
+- Massing diagrams (Phase 4) - nice to have
+- Payments (Phase 6) - can be free initially
+- Advanced features (Phases 7-9)
+
+## Getting to Visible/Usable Quickly
+
+**Sprint 1: Weeks 1-2**
+- Phase 0: Foundation
+- Goal: User can log in and create a project
+- Deliverable: Working auth + empty project shell
+
+**Sprint 2: Weeks 3-4**
+- Phase 1: Site Analysis
+- Goal: First visible feature that provides value
+- Deliverable: User can select site and see sun path
+
+**Sprint 3-5: Weeks 5-9**
+- Phase 2: 2D Floorplan (chunk into smaller pieces)
+  - Sprint 3: Canvas + wall tool
+  - Sprint 4: Door/window tools + object library
+  - Sprint 5: Multi-floor + save/load
+- Goal: Can create complete floorplans
+- Deliverable: Working 2D editor
+
+**Sprint 6-7: Weeks 10-12**
+- Phase 3: 3D Generation
+  - Sprint 6: 2D→3D conversion working
+  - Sprint 7: Sun simulation + editing
+- Goal: Automatic 3D from floorplans
+- Deliverable: MVP complete (Phases 0-3)
+
+**Sprint 8+: Weeks 13+**
+- Remaining phases based on user feedback
+- Prioritize what users need most
+
+## Atomic but Buildable Scope
+
+### Phase 2 Breakdown (Most Complex)
+Phase 2 is the longest - break into atomic tasks:
+
+**2.1 Canvas Foundation**
+- Fabric.js setup
+- Grid system
+- Pan/zoom controls
+- Test: Can see and interact with canvas
+
+**2.2 Wall Tool**
+- Click-to-create walls
+- Snap-to-grid
+- Wall thickness
+- Test: Can draw walls
+
+**2.3 Door/Window Tools**
+- Place on walls
+- Size adjustment
+- Door swing visualization
+- Test: Can add doors/windows
+
+**2.4 Object Library**
+- Create library data structure
+- Build UI (sidebar)
+- Drag-and-drop
+- Basic furniture shapes
+- Test: Can add furniture
+
+**2.5 Multi-Floor**
+- Floor management UI
+- Floor navigation
+- Floor stacking
+- Test: Can create multi-story building
+
+**2.6 Selection & Editing**
+- Select tool
+- Move/rotate/delete
+- Undo/redo
+- Test: Can edit objects
+
+**2.7 Save/Load**
+- Serialize to vector data
+- Save to file storage
+- Load from storage
+- Test: Data persists
+
+**2.8 View Mode**
+- Site overlay integration
+- Toggle Edit/View
+- Test: Can see site data on floorplan
+
+Each sub-phase can be built and tested independently, then integrated.
+
+# Risks and Mitigations  
+
+## Technical Challenges
+
+### Risk 1: 3D Generation Algorithm Complexity
+**Risk:** Converting 2D vector data to accurate 3D geometry is complex
+**Likelihood:** High
+**Impact:** High (core feature)
+**Mitigation:**
+- User already has local 2D→3D algorithm working
+- Port existing code to web environment
+- Start with simple cases (single floor, rectangular rooms)
+- Progressively handle complex cases
+- Use Web Workers for heavy calculations
+- Extensive testing with various floorplan layouts
+
+### Risk 2: Canvas/3D Performance on Web
+**Risk:** Fabric.js and Three.js may be slow with large/complex projects
+**Likelihood:** Medium
+**Impact:** Medium (user experience)
+**Mitigation:**
+- Target max 50 rooms per floor (reasonable for most projects)
+- Implement object pooling
+- Use LOD (Level of Detail) for 3D
+- Debounce/throttle rendering updates
+- Web Workers for geometry generation
+- Performance testing throughout development
+- Can upgrade to Pixi.js (WebGL) if Fabric.js too slow
+
+### Risk 3: External API Rate Limits
+**Risk:** Free geospatial APIs have rate limits
+**Likelihood:** Medium
+**Impact:** Low (can work around)
+**Mitigation:**
+- Aggressive caching in PostgreSQL (30-day expiry)
+- Nominatim: 1 req/sec (cache heavily)
+- Open-Meteo: 10K req/day (sufficient for 1K users)
+- Overpass: 2 req/sec (cache context buildings)
+- Fallback: Graceful degradation if API fails
+- Can upgrade to paid tiers if needed later
+
+### Risk 4: Browser Compatibility
+**Risk:** WebGL/Canvas may not work in all browsers
+**Likelihood:** Low
+**Impact:** Medium
+**Mitigation:**
+- Target modern desktop browsers (Chrome, Firefox, Edge, Safari)
+- Check WebGL support on page load
+- Show helpful error message if not supported
+- Focus on desktop first (mobile is secondary)
+- 95%+ of target users have compatible browsers
+
+### Risk 5: File Storage Costs
+**Risk:** Project files (especially with 3D data) could be large
+**Likelihood:** Medium
+**Impact:** Low (manageable)
+**Mitigation:**
+- Use MessagePack (30-50% smaller than JSON)
+- Compress project files before upload
+- Implement storage quotas per tier
+- Free tier: 100MB total storage
+- Pro tier: 10GB storage
+- Projects typically 1-5MB each
+
+## MVP Scope Creep
+
+### Risk: Adding Too Many Features Before Launch
+**Risk:** Trying to build everything before getting user feedback
+**Likelihood:** High
+**Impact:** High (delays launch)
+**Mitigation:**
+- Strict MVP definition: Phases 0-3 only
+- Everything else is "phase 2" (post-launch)
+- Can launch with:
+  - Site analysis ✓
+  - 2D floorplan editor ✓
+  - 3D generation ✓
+  - Basic auth ✓
+- Don't need:
+  - Payments (can be free initially)
+  - Massing (nice-to-have)
+  - Advanced features (add based on feedback)
+- Ship MVP as soon as Phases 0-3 work
+- Get user feedback
+- Prioritize Phase 4+ based on actual user needs
+
+### Risk: Over-Engineering Phase 0
+**Risk:** Spending too much time on infrastructure
+**Likelihood:** Medium
+**Impact:** Medium (delays visible progress)
+**Mitigation:**
+- Use managed services (Clerk for auth, Vercel for hosting)
+- Use Prisma ORM (automatic migrations)
+- Simple database schema (can evolve)
+- Basic UI only (refine later)
+- Don't build what you can buy/use
+- Goal: Get to Phase 1 (visible feature) ASAP
+
+## Resource Constraints
+
+### Risk: Solo Developer Burnout
+**Risk:** Building alone for months without visible progress
+**Likelihood:** Medium
+**Impact:** High (project abandonment)
+**Mitigation:**
+- Ship something visible early (Phase 1 in 2-3 weeks)
+- Celebrate small wins (each phase complete)
+- Use Task Master to break down work
+- Work in sprints (2-week cycles)
+- Share progress publicly (accountability)
+- Take breaks between phases
+
+### Risk: Unknown Technical Challenges
+**Risk:** Unexpected problems that take longer than expected
+**Likelihood:** High (always happens)
+**Impact:** Medium
+**Mitigation:**
+- Build incrementally (test each piece)
+- Ask for help early (Claude, Task Master, communities)
+- Have backup plans (e.g., Pixi.js if Fabric.js fails)
+- Focus on "good enough" not perfect
+- Can iterate after launch
+- Users care about value, not perfect code
+
+### Risk: API Changes or Deprecation
+**Risk:** Free APIs we depend on might change/break
+**Likelihood:** Low
+**Impact:** Medium
+**Mitigation:**
+- Use stable, well-maintained APIs (OSM, Open-Meteo)
+- Version API calls
+- Have fallback options:
+  - Nominatim → multiple geocoding services available
+  - Open-Meteo → can switch to other weather APIs
+  - OSM Overpass → can use other tile servers
+- Cache data aggressively (works offline if API down)
+- Monitor API status
+
+# Appendix  
+
+## Technology Choices Rationale
+
+### Why Leaflet over Mapbox?
+- **Free:** Mapbox costs $300+/year at scale, Leaflet is always free
+- **Sufficient:** Has everything we need (overlays, drawing, geocoding via Nominatim)
+- **Open source:** No vendor lock-in
+- **Well-documented:** Large community, lots of examples
+- **Upgrade path:** Can switch to Mapbox later if needed
+
+### Why Fabric.js over Pixi.js?
+- **Faster development:** Fabric.js has higher-level API
+- **Good enough:** Sufficient for 50-room floorplans
+- **Mature:** Battle-tested, stable
+- **Upgrade path:** Can migrate to Pixi.js (WebGL) if performance needed
+
+### Why Three.js over Babylon.js?
+- **Lighter:** Smaller bundle size
+- **More popular:** Larger community, more examples
+- **Sufficient:** Has everything we need for architectural visualization
+- **React integration:** React Three Fiber available
+
+### Why MessagePack over JSON?
+- **30-50% smaller:** Faster uploads/downloads
+- **Faster parsing:** Better performance
+- **Binary format:** Better for geometry data
+- **Can convert to JSON:** Still readable/debuggable
+
+### Why Zustand over Redux?
+- **Simpler:** Less boilerplate
+- **Smaller:** Lightweight
+- **TypeScript-first:** Great type inference
+- **Sufficient:** Handles all our state needs
+- **Can scale:** Works for large apps
+
+## Research Findings
+
+### Competitor Analysis
+**SketchUp Web:**
+- Pros: Industry standard, powerful 3D
+- Cons: Manual 3D modeling, no site analysis, expensive
+- **Our advantage:** Automatic 3D, integrated site data
+
+**Rayon Design:**
+- Pros: Beautiful 2D UI, fast
+- Cons: 2D only, no 3D, no site analysis
+- **Our advantage:** 3D generation, site integration
+
+**Floorplanner:**
+- Pros: Easy to use
+- Cons: Interior design focus, no site analysis, limited for architecture
+- **Our advantage:** Exterior architecture, professional features
+
+### Market Validation
+- 120K registered architects in US (target: small firms = 60%)
+- Architecture students: ~25K
+- Growing trend: web-based tools, remote work
+- Pain point validated: Disconnected tools, manual 3D modeling
+
+### Technical Validation
+- User has 2D→3D algorithm working locally (biggest technical risk mitigated)
+- All chosen technologies proven in production (Next.js, Leaflet, Fabric.js, Three.js)
+- Free tier APIs sufficient for 1K users
+- Can scale infrastructure as needed
+
+## Success Metrics
+
+### Phase 0 Success
+- User can sign up and log in
+- Can create/delete projects
+- Database and file storage working
+- Deployed to Vercel
+
+### Phase 1 Success
+- User can select site
+- All geospatial data fetches correctly
+- Visualizations render properly
+- Data caches for performance
+
+### Phase 2 Success
+- User can draw complete floorplan
+- Tools work intuitively
+- Multi-floor buildings supported
+- Save/load works reliably
+
+### Phase 3 Success (MVP)
+- 3D generates automatically from any floorplan
+- Geometry is accurate
+- Sun simulation works
+- Performance >30 FPS
+- **Users complete full workflow: site → 2D → 3D**
+
+### Post-MVP Success
+- 1,000 users signed up
+- 500 active projects
+- 5% convert to paid (50 paying users)
+- Positive user feedback
+- Feature requests guide Phase 4+
+
+## Initial Task List (Phase 0)
+
+When Task Master parses this PRD, it should generate tasks for Phase 0:
+
+1. Initialize Next.js 14 project with TypeScript
+2. Set up folder structure (feature-based)
+3. Install core dependencies (Zustand, React Query, Tailwind, etc.)
+4. Configure Tailwind CSS and create design tokens
+5. Set up Clerk authentication
+6. Create sign-up and login pages
+7. Implement protected routes
+8. Set up PostgreSQL on Railway
+9. Initialize Prisma ORM
+10. Create database schema (users, projects)
+11. Generate Prisma client
+12. Test database connection
+13. Set up Cloudflare R2 / AWS S3
+14. Create file upload utilities
+15. Create project CRUD API routes
+16. Build project list page
+17. Build create project flow
+18. Build project settings page
+19. Implement project delete
+20. Create basic UI layout (header, sidebar)
+21. Set up Vercel project
+22. Configure environment variables
+23. Set up CI/CD (GitHub → Vercel)
+24. Test deployment
+25. Verify Phase 0 complete (checklist)
+
+## Definition of Done (Each Phase)
+
+A phase is complete when:
+- ✅ All tasks in scope are completed
+- ✅ Feature works end-to-end
+- ✅ Critical bugs fixed
+- ✅ Manual testing passed
+- ✅ Data persists correctly
+- ✅ Can demo to a user
+- ✅ Deployed to production
+- ✅ No blockers for next phase
+
+## Contact & Feedback
+- Developer: Solo architect/developer
+- AI Assistants: Claude (planning), Cursor (coding), Task Master (task management)
+- Feedback loop: Build → Test → Ship → Learn → Iterate
+</PRD>

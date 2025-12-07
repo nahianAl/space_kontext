@@ -1,0 +1,193 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/lib/prisma/generated"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["app"]
+}
+
+model User {
+  id        String        @id @default(cuid())
+  clerkId   String        @unique
+  email     String        @unique
+  firstName String?
+  lastName  String?
+  imageUrl  String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  projects  Project[]
+  sessions  UserSession[]
+  sketchfabTokens SketchfabToken[]
+  sketchfabModels SketchfabModel[]
+
+  @@map("users")
+  @@schema("app")
+}
+
+model UserSession {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_sessions")
+  @@schema("app")
+}
+
+model Project {
+  id           String        @id @default(cuid())
+  name         String
+  description  String?
+  userId       String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  settings     Json?
+  floorplans   Floorplan[]
+  massings     Massing[]
+  models3D     Model3D[]
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  siteAnalysis SiteAnalysis?
+  sketchfabModels SketchfabModel[]
+
+  @@map("projects")
+  @@schema("app")
+}
+
+model SiteAnalysis {
+  id              String   @id @default(cuid())
+  projectId       String   @unique
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  sunPathData     Json?
+  weatherData     Json?
+  topographyData  Json?
+  contextData     Json?
+  analysisResults Json?
+  boundary        Json
+  coordinates     Json
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("site_analysis")
+  @@schema("app")
+}
+
+model Floorplan {
+  id        String    @id @default(cuid())
+  projectId String
+  name      String
+  level     Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  data      Json
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  models3D  Model3D[]
+
+  @@map("floorplans")
+  @@schema("app")
+}
+
+model Model3D {
+  id          String     @id @default(cuid())
+  projectId   String
+  floorplanId String?
+  name        String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  modelData   Json
+  settings    Json?
+  floorplan   Floorplan? @relation(fields: [floorplanId], references: [id])
+  project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("models_3d")
+  @@schema("app")
+}
+
+model Massing {
+  id          String   @id @default(cuid())
+  projectId   String
+  name        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  massingData Json
+  analysis    Json?
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("massings")
+  @@schema("app")
+}
+
+model File {
+  id              String   @id @default(cuid())
+  userId          String
+  projectId       String?
+
+  // File metadata
+  filename        String
+  originalName    String
+  mimeType        String
+  size            Int       // Bytes
+
+  // Storage (R2)
+  storageUrl      String    // Cloudflare R2 URL
+  storagePath     String    // Path in bucket
+  path            String?   @unique // Legacy field, kept for backward compatibility
+
+  // Categorization
+  fileType        String    // image, dxf, glb, obj, pdf, etc.
+  category        String?   // floorplan, model, site, export, etc.
+
+  uploadedBy      String?   // Legacy field, use userId instead
+  createdAt       DateTime  @default(now())
+  metadata        Json?
+
+  @@index([userId])
+  @@index([projectId])
+  @@map("files")
+  @@schema("app")
+}
+
+model GeospatialCache {
+  id        String   @id @default(cuid())
+  cacheKey  String   @unique
+  data      Json
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("geospatial_cache")
+  @@schema("app")
+}
+
+model SketchfabToken {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  accessToken  String
+  refreshToken String
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sketchfab_tokens")
+  @@schema("app")
+}
+
+model SketchfabModel {
+  id            String   @id @default(cuid())
+  modelUid      String   @unique
+  userId        String
+  projectId     String
+  fileUrl       String
+  attribution   Json
+  license       String
+  createdAt     DateTime @default(now())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("sketchfab_models")
+  @@schema("app")
+}

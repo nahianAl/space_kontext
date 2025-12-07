@@ -1,0 +1,768 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Initialize Next.js 14 Project",
+        "description": "Set up a new Next.js 14 project with TypeScript, configure essential dependencies and development environment",
+        "details": "Create project using create-next-app with TypeScript template. Install core dependencies: Zustand, React Query, Tailwind CSS, shadcn/ui. Configure tsconfig.json, eslint, and prettier. Set up environment variables structure.",
+        "testStrategy": "Verify project builds without errors, all dependencies resolve, and development server runs. Test TypeScript compilation and linting.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Implement Authentication with Clerk",
+        "description": "Set up user authentication system using Clerk SDK with sign-up, login, and protected routes",
+        "details": "Install Clerk SDK, create auth provider wrapper, implement sign-up and login pages. Set up protected route middleware. Create user context and hooks for auth state.",
+        "testStrategy": "Test user registration, login, logout flows. Verify protected routes redirect unauthorized users. Test session persistence.",
+        "priority": "high",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Set up PostgreSQL Database",
+        "description": "Configure local PostgreSQL database with Docker/local installation, initialize Prisma ORM, and create initial schema with geospatial support",
+        "status": "done",
+        "dependencies": [
+          "1"
+        ],
+        "priority": "high",
+        "details": "Set up local PostgreSQL instance using Docker or native installation. Initialize Prisma ORM, create schema for users, projects, and cached geospatial data. Generate Prisma client, create database utility functions. Set up migrations. Prepare configuration for future Railway deployment in production.",
+        "testStrategy": "Test local database connection, run migrations, verify schema creation including geospatial tables. Test basic CRUD operations with Prisma client. Verify geospatial data storage and retrieval. Create test suite for database utilities.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set up local PostgreSQL environment",
+            "description": "Install and configure PostgreSQL locally using either Docker container or native installation",
+            "dependencies": [],
+            "details": "Create Docker compose file or installation guide for local PostgreSQL setup. Configure database name, user credentials, and port settings. Document setup process for team reference. Enable PostGIS extension for geospatial functionality.",
+            "status": "pending",
+            "testStrategy": "Verify database connection, test credentials, confirm PostGIS extension activation",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Initialize Prisma ORM configuration",
+            "description": "Set up Prisma ORM with local database connection and initial configuration",
+            "dependencies": [
+              1
+            ],
+            "details": "Install Prisma dependencies, initialize configuration. Create schema file with database connection. Set up development environment variables for database URL. Configure Prisma development workflow.",
+            "status": "pending",
+            "testStrategy": "Verify Prisma connection string, test database connection through Prisma CLI",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Create database schema",
+            "description": "Design and implement database schema for users, projects, and geospatial data caching",
+            "dependencies": [
+              2
+            ],
+            "details": "Define Prisma models for users, projects, and cached geospatial data. Set up relationships between models. Create indexes for performance optimization. Implement geospatial data structures and relationships.",
+            "status": "pending",
+            "testStrategy": "Validate schema definitions, test relationships, verify geospatial data model",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Implement database utilities",
+            "description": "Create utility functions for common database operations and migrations",
+            "dependencies": [
+              3
+            ],
+            "details": "Create helper functions for common database operations. Implement migration scripts. Set up seeding functionality for development. Create utility functions for geospatial queries and caching.",
+            "status": "pending",
+            "testStrategy": "Unit test database utilities, verify migration scripts, test error handling",
+            "parentId": "undefined"
+          },
+          {
+            "id": 5,
+            "title": "Prepare production deployment configuration",
+            "description": "Create configuration templates and documentation for future Railway deployment",
+            "dependencies": [
+              4
+            ],
+            "details": "Document Railway deployment process. Create configuration templates for production environment. Set up environment variable structure for easy switching between local and Railway deployments.",
+            "status": "pending",
+            "testStrategy": "Verify configuration templates, test environment variable switching",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 5,
+        "recommendedSubtasks": 0,
+        "expansionPrompt": "No further expansion needed; subtasks are already defined and the task is complete."
+      },
+      {
+        "id": 4,
+        "title": "Configure File Storage System",
+        "description": "Set up local file storage system with upload/download utilities, with future migration path to Cloudflare R2/AWS S3",
+        "status": "done",
+        "dependencies": [
+          "1"
+        ],
+        "priority": "high",
+        "details": "Implement local file storage in ./uploads/ directory. Create file service utilities for local file operations including upload, download, and deletion. Implement file type validation and size limits. Design interfaces to be cloud-storage compatible for future migration to R2/S3. Ensure proper directory structure and file naming conventions. Implement error handling for file system operations.",
+        "testStrategy": "Test file upload/download operations using local storage, verify file persistence in ./uploads/ directory, test file type restrictions and size limits. Test error handling for invalid files and operations. Verify directory structure maintenance. Create tests that will be reusable for future cloud storage implementation.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set up local storage directory structure",
+            "description": "Create and configure ./uploads/ directory with appropriate permissions and structure",
+            "dependencies": [],
+            "details": "Create ./uploads/ directory with proper permissions (0755). Set up subdirectories for different content types. Implement directory existence checks and auto-creation. Add appropriate entries to .gitignore to exclude uploaded files. Document directory structure.",
+            "status": "pending",
+            "testStrategy": "Verify directory creation and permissions, test subdirectory structure, validate gitignore configuration",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement file service utilities",
+            "description": "Create utility functions for file operations using local file system",
+            "dependencies": [
+              1
+            ],
+            "details": "Create FileService class with methods for upload, download, delete, and list operations. Implement file streaming for large files. Add metadata handling for files. Include error handling for all operations. Design interfaces to be compatible with future cloud storage implementation.",
+            "status": "pending",
+            "testStrategy": "Unit test all file operations, test error handling, verify file metadata handling",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Implement file validation system",
+            "description": "Create validation system for file types, sizes, and security checks",
+            "dependencies": [
+              2
+            ],
+            "details": "Implement MIME type validation, file size limits, file name sanitization. Create configurable validation rules. Add virus/malware scanning integration points. Implement file extension validation. Create validation pipeline for file uploads.",
+            "status": "pending",
+            "testStrategy": "Test file type validation, size limits, security checks with various file types",
+            "parentId": "undefined"
+          },
+          {
+            "id": 4,
+            "title": "Create file cleanup and maintenance system",
+            "description": "Implement system for managing temporary files and cleaning up unused uploads",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Create maintenance routine for removing temporary files. Implement file expiration system. Add logging for file operations. Create scheduled cleanup tasks. Implement storage space monitoring.",
+            "status": "pending",
+            "testStrategy": "Test cleanup of temporary files, verify unused file deletion, test maintenance scheduling",
+            "parentId": "undefined"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Create Base UI Components",
+        "description": "Develop core UI components using Tailwind and shadcn/ui",
+        "details": "Create layout components: Header, Sidebar, Main Content area. Implement responsive design system. Set up Tailwind theme and design tokens.",
+        "testStrategy": "Test component rendering, responsive behavior, and theme consistency. Verify accessibility compliance.",
+        "priority": "medium",
+        "dependencies": [
+          "1"
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Implement Project CRUD Operations",
+        "description": "Create API routes and frontend functionality for project management",
+        "details": "Build API routes for project creation, reading, updating, and deletion. Create frontend forms and list views. Implement optimistic updates.",
+        "testStrategy": "Test all CRUD operations end-to-end. Verify data persistence and error handling.",
+        "priority": "high",
+        "dependencies": [
+          "2",
+          "3",
+          "4"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 5,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Break down this task with a focus on implement project crud operations."
+      },
+      {
+        "id": 7,
+        "title": "Set up Leaflet Map Integration",
+        "description": "Integrate Leaflet maps with OpenStreetMap tiles for site selection",
+        "details": "Task completed successfully! Implemented Leaflet map integration with the following features:\n\n✅ Core Implementation:\n- Installed Leaflet, react-leaflet, and related dependencies\n- Created SimpleMap component with OpenStreetMap tiles\n- Set up Zustand store for map state management\n- Built complete site analysis page with map integration\n\n✅ Search Functionality:\n- Added support for both coordinate input (lat, lng format) and address search\n- Integrated Nominatim geocoding API for address lookups\n- Added coordinate validation and error handling\n- Implemented map navigation with proper zoom levels\n- Added quick example buttons for easy testing\n\n✅ User Experience:\n- Responsive design with left panel controls and right panel map\n- Real-time location display (coordinates and zoom level)\n- Layer visibility toggles for future map overlays\n- Analysis tools placeholder for upcoming features\n- Integrated with dashboard navigation\n\n✅ Technical Features:\n- Client-side rendering to avoid SSR issues\n- Dynamic Leaflet imports for better performance\n- Proper map cleanup and memory management\n- TypeScript throughout for type safety\n- Error handling and loading states\n\nThe map is now fully functional and ready for Task #8 (Site Boundary Drawing) and Task #9 (Geospatial API Integration).",
+        "testStrategy": "Test map rendering, controls, and tile loading. Verify performance and memory usage.",
+        "priority": "high",
+        "dependencies": [
+          "5"
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Implement Site Boundary Drawing",
+        "description": "Create simple tools for users to draw and select their site boundary",
+        "details": "Task completed successfully! Implemented simplified site boundary drawing with the following features:\n\n✅ Core Implementation:\n- Created custom polygon drawing without leaflet-draw dependency\n- Added drawing mode toggle button in Analysis Tools section\n- Implemented click-to-draw polygon functionality with visual feedback\n- Added double-click to finish drawing\n- Integrated with existing SimpleMap component\n\n✅ User Experience:\n- Simple one-click drawing mode activation via 'Draw Site Boundary' button\n- Visual feedback: cursor changes to crosshair, temporary dashed polygon shows while drawing\n- Clear visual indication of completed site boundary (solid blue polygon)\n- Button text changes to 'Exit Drawing Mode' when active\n- Easy way to clear and redraw using 'Clear Site Boundary' button\n\n✅ Technical Features:\n- Custom drawing control button (📐 icon) appears on map when in drawing mode\n- Real-time polygon preview with dashed lines while drawing\n- Automatic area calculation using turf.js (with fallback shoelace formula)\n- Site area display in Site Information panel (shows hectares)\n- Boundary data stored as GeoJSON in Zustand store\n- Proper cleanup and memory management\n\n✅ Area Calculation:\n- Primary: Uses turf.js for accurate area calculation in square meters\n- Fallback: Simple shoelace formula with coordinate conversion\n- Displays area in hectares (ha) in the Site Information panel\n- Updates automatically when boundary is drawn or cleared\n\nThe implementation focuses on the core user need: 'Draw my site boundary and select it' - without over-engineering. Users can now easily draw their site boundaries and see the calculated area.",
+        "testStrategy": "Test basic polygon drawing, site selection, area calculation, and boundary storage. Verify users can draw, view, and clear their site boundaries.",
+        "priority": "high",
+        "dependencies": [
+          "7"
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Integrate Geospatial APIs",
+        "description": "Connect and implement all required geospatial data APIs",
+        "details": "Integrate APIs: Open-Meteo, OpenStreetMap Overpass, SoilGrids, Open-Elevation. Implement rate limiting and error handling.",
+        "testStrategy": "Test API integrations, verify data fetching, test rate limit handling and error cases.",
+        "priority": "high",
+        "dependencies": [
+          "7",
+          "8"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 5,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Break down this task with a focus on integrate geospatial apis."
+      },
+      {
+        "id": 10,
+        "title": "Create Konva.js Canvas Foundation",
+        "description": "Set up Konva.js stage and layers for 2D floorplan editing",
+        "status": "pending",
+        "dependencies": [
+          "5"
+        ],
+        "priority": "high",
+        "details": "Initialize Konva.js Stage and Layers for 2D floorplan editing. Implement zoom/pan controls, set up grid system, and create canvas state management. Implement performance optimizations specific to architectural tools using Konva.js best practices.\n<info added on 2025-10-16T03:55:47.062Z>\nBased on the research findings, here's the technical implementation details that should be appended:\n\nInstall required dependencies: react-konva and konva packages. Configure Next.js by updating next.config.js to handle canvas externals through either webpack configuration or Turbopack resolveAlias settings.\n\nInitialize the Konva.js stage using TypeScript with proper type definitions:\n- Create a responsive stage component that adjusts to window dimensions\n- Implement multiple layer management for separating UI elements, grid system, and drawing elements\n- Set up event handlers for touch and mouse interactions\n- Create custom shape definitions for architectural elements\n\nPerformance optimization implementation:\n- Use Shape caching for static elements\n- Implement layer batch updates for multiple object modifications\n- Add throttling for continuous events like pan/zoom\n- Create separate layers for static and dynamic content\n- Implement progressive loading for large floorplans\n\nState management structure:\n- Create typed interfaces for canvas objects and transformations\n- Implement undo/redo stack with serializable operations\n- Set up event delegation for improved memory management\n- Create state observers for real-time updates\n\nCanvas features should be wrapped in React components with proper TypeScript interfaces for maintainability and type safety. Implement error boundaries around canvas components to handle WebGL and rendering failures gracefully.\n</info added on 2025-10-16T03:55:47.062Z>\n<info added on 2025-10-16T03:56:13.431Z>\nBased on the research findings, here are additional implementation details for the Konva.js canvas foundation:\n\nAnimation and Interactive Features Implementation:\n- Integrate react-spring with Konva.js for smooth, high-performance animations\n- Create custom shape definitions using Shape component with sceneFunc for architectural elements\n- Implement draggable functionality for canvas elements with proper TypeScript event handlers\n- Add drag boundaries and snapping behavior for precise element placement\n\nNext.js Integration Requirements:\n- Create empty.js placeholder file in project root for canvas library compatibility\n- Update webpack configuration in next.config.js to handle canvas externals:\n  ```\n  webpack: (config) => {\n    config.externals = [...config.externals, { canvas: 'canvas' }];\n    return config;\n  }\n  ```\n- For Turbopack compatibility, implement resolveAlias settings:\n  ```\n  experimental: {\n    turbo: {\n      resolveAlias: {\n        canvas: './empty.js'\n      }\n    }\n  }\n  ```\n\nComponent Structure:\n- Create reusable canvas components with proper TypeScript interfaces\n- Implement HOCs for common canvas functionality\n- Add error boundary components specifically for WebGL and canvas rendering failures\n- Create separate components for canvas controls and toolbars\n\nThese implementations should be integrated with the existing layer management and state management systems while maintaining the established performance optimization patterns.\n</info added on 2025-10-16T03:56:13.431Z>\n<info added on 2025-10-16T03:57:03.828Z>\nBased on the research findings, here are additional implementation details for the Konva.js canvas foundation:\n\nEvent Handling and Performance Optimization:\n- Implement custom event delegation system using TypeScript event types for better type safety\n- Create specialized event handlers for touch devices with proper gesture recognition\n- Add debouncing for window resize events affecting stage dimensions\n- Implement WebGL renderer option for improved performance with complex shapes\n- Add frame rate monitoring and automatic quality adjustment system\n\nError Handling and Recovery:\n- Create fallback rendering system when WebGL is not available\n- Implement automatic canvas state saving with localStorage backup\n- Add error recovery mechanisms for failed shape renders\n- Create diagnostic tools for canvas performance monitoring\n\nShape Management:\n- Implement shape pooling system for frequently used architectural elements\n- Create shape factory with TypeScript generics for type-safe shape creation\n- Add shape transformation matrix calculations for precise architectural measurements\n- Implement shape grouping with collective transformation handling\n\nMemory Management:\n- Create automatic garbage collection for removed shapes\n- Implement shape recycling pool for frequently created/destroyed elements\n- Add memory usage monitoring with automatic optimization triggers\n- Create cleanup routines for unused canvas resources\n\nThese features should be implemented using proper TypeScript interfaces and integrated with the existing canvas foundation while maintaining the established performance patterns and architectural precision requirements.\n</info added on 2025-10-16T03:57:03.828Z>\n<info added on 2025-10-16T03:57:52.699Z>\nBased on the research findings regarding Konva.js dependencies and compatibility, here are the specific dependency and configuration requirements:\n\nPackage Installation Requirements:\n- Core dependencies: konva, react-konva\n- Development dependency: @types/konva (if types are not bundled)\n\nTypeScript Configuration:\n- Update tsconfig.json to include DOM definitions:\n  compilerOptions must include \"lib\": [\"es6\", \"dom\"]\n- Ensure proper type definitions for canvas-related components\n\nBrowser Compatibility Requirements:\n- Support for ES2015 JavaScript required\n- Polyfills needed for older browsers: Array.from, Array.prototype.find\n- Client-side rendering recommended for architectural tools\n\nBundle Optimization:\n- Use minimal bundle imports for core features: import from 'konva/lib/Core'\n- Import specific shapes as needed to reduce bundle size\n- Implement dynamic imports for less frequently used features\n\nExample Component Structure:\n```tsx\nimport { Stage, Layer, Rect } from 'react-konva';\n\nconst FloorplanCanvas = () => (\n  <Stage width={window.innerWidth} height={window.innerHeight}>\n    <Layer>\n      {/* Canvas content */}\n    </Layer>\n  </Stage>\n);\n```\n\nThese configurations should be implemented before proceeding with the canvas foundation development to ensure proper TypeScript support and optimal performance.\n</info added on 2025-10-16T03:57:52.699Z>\n<info added on 2025-10-16T03:58:06.500Z>\nBased on the research findings regarding Konva.js dependencies and compatibility, here are additional implementation details for dependency management and version compatibility:\n\nDevelopment Environment Setup:\n- Use npm workspaces or yarn berry for better dependency management\n- Lock Konva.js version to ensure consistent behavior across environments\n- Configure package.json with peer dependencies:\n  konva: \"^9.0.0\"\n  react-konva: \"^18.0.0\"\n  @types/konva: \"^8.0.0\" (if needed)\n\nVersion Compatibility Requirements:\n- Ensure React version 16.8+ for hooks support\n- Verify Next.js version 12+ for proper canvas handling\n- Configure TypeScript version 4.5+ for improved type inference\n\nBuild System Optimizations:\n- Enable tree-shaking for Konva.js imports\n- Configure module federation for shared canvas components\n- Implement dynamic imports for canvas-specific features\n- Add source-map support for better debugging\n\nDevelopment Tools Integration:\n- Configure React DevTools for Konva component inspection\n- Add canvas-specific ESLint rules\n- Set up performance monitoring tools for canvas operations\n- Implement automated dependency update checks with compatibility validation\n\nThese configurations should be implemented alongside existing setup to ensure proper dependency management and version compatibility across the development environment.\n</info added on 2025-10-16T03:58:06.500Z>\n<info added on 2025-10-16T03:58:45.300Z>\nBased on the research findings regarding Konva.js dependencies and compatibility, here are the specific installation and configuration requirements for client-side architectural tools:\n\nClient-Side Rendering Setup:\n- Install core dependencies using npm or yarn:\n  npm install konva react-konva\n  npm install --save-dev @types/konva (optional, if types are missing)\n- Verify compatibility with React 16+ and Next.js 14\n- Ensure browser support for ES2015 JavaScript features\n\nPerformance Optimization Requirements:\n- Import only necessary Konva modules using path imports:\n  import Konva from 'konva/lib/Core'\n  import { Rect, Circle } from 'konva/lib/shapes'\n- Configure bundle splitting for shape-specific imports\n- Implement lazy loading for complex shape components\n\nExample Implementation Structure:\n- Create base FloorplanCanvas component with proper stage initialization\n- Implement separate shape factories for architectural elements\n- Add performance monitoring and optimization hooks\n- Set up proper event handling with TypeScript type safety\n\nThese configurations should be implemented alongside existing canvas foundation setup while maintaining established performance patterns and architectural tool requirements. Test thoroughly for rendering quality and memory usage across different devices and browsers.\n</info added on 2025-10-16T03:58:45.300Z>\n<info added on 2025-10-16T03:59:01.827Z>\nBased on the research findings regarding Konva.js dependencies and compatibility, here are the specific SSR and client-side rendering considerations:\n\nSSR Compatibility Notes:\n- Konva v10+ requires explicit canvas backend configuration for SSR scenarios\n- For architectural tools, prioritize client-side rendering to avoid SSR complexity\n- If SSR is required, install either 'canvas' or 'skia-canvas' backend libraries\n\nClient-Side Performance Optimizations:\n- Implement conditional imports to avoid SSR-related canvas issues:\n  ```\n  const KonvaStage = dynamic(() => import('../components/KonvaStage'), {\n    ssr: false,\n    loading: () => <LoadingPlaceholder />\n  });\n  ```\n- Use requestAnimationFrame for smooth canvas updates\n- Implement canvas element cleanup on component unmount\n- Add error handling for canvas initialization failures\n\nBrowser Support:\n- Add polyfill detection and loading for older browsers\n- Implement fallback rendering for browsers without required canvas features\n- Add browser capability checks before initializing advanced canvas features\n\nThese configurations should be implemented alongside the existing canvas foundation setup to ensure proper rendering across different environments while maintaining optimal performance.\n</info added on 2025-10-16T03:59:01.827Z>",
+        "testStrategy": "Test Konva.js stage initialization, basic interactions, state management, and Konva.js-specific features. Validate performance improvements. Include:\n- Performance benchmarks for large drawings\n- Memory usage patterns and leak detection\n- Rendering quality across devices\n- Architectural precision validation\n- Canvas operation stress testing",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Implement Wall Drawing Tool",
+        "description": "Create wall drawing functionality using Konva.js with thickness and snapping, ensuring compatibility with 3D conversion and sun simulation requirements",
+        "status": "done",
+        "dependencies": [
+          "10"
+        ],
+        "priority": "high",
+        "details": "Implement wall creation tool with thickness controls and corner snapping using Konva.js. Add wall intersection handling and validation. Ensure wall data structure supports future 3D model conversion with height properties and material assignments. Include metadata fields for sun simulation calculations such as thermal properties and surface reflectivity.\n\nKey implementation requirements for Konva.js:\n\n1. Wall Class Implementation:\nclass Wall extends Konva.Line {\n  required properties: thickness, height, material, thermalProperties (conductivity, mass), surfaceReflectivity\n  metadata: intersectionPoints, attachedObjects (doors/windows), validationState\n}\n\n2. Stage Setup:\n- Initialize using React useRef/useEffect with proper cleanup\n- Configure Konva Stage and Layer for architectural tools\n- Set up proper event handling and performance optimization\n\n3. Performance Optimizations:\n- Implement object pooling for large floorplans\n- Use Konva.Group for static wall collections\n- Batch render updates using requestAnimationFrame\n- Cache hit-testing results during operations\n\n4. Wall Data Structure for 3D:\ngeometryData: {\n  path: Array<Point>,\n  holes: Array<Path>,\n  extrudeSettings: {\n    depth: number,\n    bevelEnabled: boolean,\n    steps: number\n  }\n}\n\n5. Drawing Workflow:\n- MouseDown: Initialize wall with snapping\n- MouseMove: Preview with thickness\n- MouseUp: Finalize wall object\n\n6. Integration Requirements:\n- Maintain compatibility with existing grid system\n- Use Zustand for state management\n- Implement Konva.js compatible serialization\n- Support architectural tool integration\n\n7. Resource Management:\n- Implement proper cleanup for removed walls\n- Cache static elements\n- Add performance monitoring\n- Handle large-scale floorplans efficiently\n<info added on 2025-10-16T04:00:10.533Z>\n8. Technical Implementation Details:\n\nDrawing and Event Handling:\n- Initialize wall drawing on mousedown/touchstart using new Konva.Line\n- Update points array during mousemove/touchmove for live preview\n- Finalize wall segment on mouseup/touchend with complete property set\n- Implement custom event handlers for wall manipulation and editing\n- Add endpoint handles using Konva.Circle for wall resizing\n\nWall Data Management:\n- Store extended wall properties directly on Konva node:\n  ```js\n  {\n    wallId: uuid(),\n    points: [x1, y1, x2, y2],\n    thickness: wallThickness,\n    height: wallHeight,\n    material: 'concrete',\n    thermalProps: { \n      uValue: 0.3, \n      reflectivity: 0.5 \n    },\n    connectedTo: ['wall-122', 'wall-124']\n  }\n  ```\n\nSnapping Implementation:\n- Calculate distance between pointer and existing endpoints/grid points\n- Implement snap threshold based on zoom level\n- Apply coordinate adjustment when within snap threshold\n- Cache nearby snap points for performance\n- Update visual indicators for available snap points\n\nReact Integration:\n- Use react-konva components for declarative canvas management\n- Implement wall components as controlled React elements\n- Manage wall state updates through React state or Zustand\n- Use React hooks for canvas lifecycle management\n- Batch render updates for performance optimization\n\nLayer Management:\n- Separate walls into dedicated Konva.Layer\n- Implement layer-specific caching strategies\n- Use layer.batchDraw() for multiple wall updates\n- Add separate layers for UI elements and handles\n\nError Handling:\n- Validate wall properties before creation\n- Handle intersection edge cases\n- Implement undo/redo for wall operations\n- Add error boundaries for canvas operations\n- Provide user feedback for invalid operations\n</info added on 2025-10-16T04:00:10.533Z>\n<info added on 2025-10-16T04:01:09.491Z>\n9. React-Konva Integration Details:\n\nPerformance and State Management:\n- Implement custom hooks for canvas state management:\n  - useWallDrawing: Manages active drawing state and wall creation\n  - useWallSelection: Handles wall selection and transformation\n  - useSnapPoints: Maintains snap point cache and calculations\n- Use React.memo for wall components to prevent unnecessary re-renders\n- Implement staged rendering for large floorplans using virtualization\n- Create dedicated context for wall-specific state management\n\nEvent Optimization:\n- Debounce mouse move events during wall drawing (16ms threshold)\n- Batch wall updates using requestAnimationFrame\n- Implement event delegation for wall selection and manipulation\n- Cache transform calculations during drag operations\n- Use passive event listeners where applicable\n\nState Synchronization:\n- Create bidirectional sync between Konva objects and Zustand store\n- Implement optimistic updates for wall modifications\n- Add state reconciliation for undo/redo operations\n- Maintain separate state slices for:\n  - Active drawing operations\n  - Wall selection state\n  - Transform operations\n  - Snap points and guidelines\n  - Cached wall properties\n\nMemory Management:\n- Implement cleanup for unused Konva nodes and event listeners\n- Add dispose handlers for removed walls and associated objects\n- Use weak references for temporary drawing state\n- Clear transformation handlers when switching tools\n- Implement proper teardown in useEffect cleanup functions\n\nError Recovery:\n- Add state recovery mechanisms for failed drawing operations\n- Implement automatic cleanup of orphaned wall segments\n- Add validation for wall property updates\n- Include error boundary for canvas operations with fallback UI\n- Maintain operation history for recovery scenarios\n</info added on 2025-10-16T04:01:09.491Z>",
+        "testStrategy": "Test wall drawing, thickness adjustment, snapping behavior, and intersection handling specifically with Konva.js. Verify wall data structure includes all necessary properties for 3D conversion. Test storage and validation of thermal and material properties. Ensure wall segment data can be properly converted to 3D geometry for future features. Include specific tests for Konva.js compatibility and performance benchmarks.",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Create Door and Window Tools",
+        "description": "Implement tools for adding doors and windows to walls",
+        "details": "Create door/window placement tools, size adjustment, swing direction for doors. Implement wall attachment validation.\n<info added on 2025-10-16T03:26:36.975Z>\nBased on the research findings about Fabric.js implementation, here's the technical implementation details that should be added to the task:\n\nInitialize door and window tools using Fabric.js objects with the following specifications:\n\nDoors should be implemented as composite objects consisting of:\n- Rectangle shape for door frame\n- Arc path for swing animation\n- Rotation controls for adjusting swing direction\n- Snap points for wall attachment\n- Custom control points for size adjustment\n\nWindows should be implemented as composite objects with:\n- Rectangle shape for window frame\n- Inner frame divisions using Fabric.js line objects\n- Snap points for wall attachment\n- Width/height controls with standard size presets\n\nBoth elements require:\n- Grid snapping functionality using 20px intervals\n- Object caching for performance optimization\n- Event listeners for wall attachment validation\n- WebGL acceleration when available\n- Transformation constraints to maintain aspect ratios\n- Custom control renders for intuitive size adjustment\n- Collision detection with existing wall elements\n- JSON serialization support for save/load operations\n\nInclude performance optimizations:\n- Object property caching\n- Batch rendering for multiple objects\n- Viewport culling for large floor plans\n- Memory management for undo/redo operations\n</info added on 2025-10-16T03:26:36.975Z>",
+        "testStrategy": "Test door/window placement, sizing, swing animation, and wall attachment.",
+        "priority": "high",
+        "dependencies": [
+          "11"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "complexity": 5,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Break down this task with a focus on create door and window tools."
+      },
+      {
+        "id": 13,
+        "title": "Develop Object Library System",
+        "description": "Create furniture and fixture library with drag-and-drop functionality",
+        "details": "Build object library UI, implement drag-and-drop, create basic furniture shapes. Add object properties and metadata.",
+        "testStrategy": "Test library UI, drag-and-drop functionality, object placement and properties.",
+        "priority": "medium",
+        "dependencies": [
+          "10"
+        ],
+        "status": "deferred",
+        "subtasks": [],
+        "complexity": 5,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Break down this task with a focus on develop object library system."
+      },
+      {
+        "id": 14,
+        "title": "Implement Multi-Floor Management",
+        "description": "Create system for managing multiple floors in a building",
+        "details": "Build floor management UI, implement floor switching, handle floor data storage. Create floor stacking visualization.",
+        "testStrategy": "Test floor creation, switching, data persistence between floors.",
+        "priority": "high",
+        "dependencies": [
+          "11",
+          "12"
+        ],
+        "status": "deferred",
+        "subtasks": [],
+        "complexity": 8,
+        "recommendedSubtasks": 5,
+        "expansionPrompt": "Expand into subtasks for floor management UI, floor switching logic, data storage, stacking visualization, and cross-floor data consistency testing."
+      },
+      {
+        "id": 15,
+        "title": "Create Selection and Editing Tools",
+        "description": "Implement object selection and manipulation tools",
+        "details": "Create selection tool, implement move/rotate/scale controls. Add object property editing and deletion.",
+        "testStrategy": "Test selection, transformation controls, property editing, and deletion.",
+        "priority": "medium",
+        "dependencies": [
+          "13"
+        ],
+        "status": "deferred",
+        "subtasks": [],
+        "complexity": 5,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Break down this task with a focus on create selection and editing tools."
+      },
+      {
+        "id": 16,
+        "title": "Set up Three.js Scene",
+        "description": "Initialize Three.js rendering environment for 3D visualization",
+        "details": "Set up Three.js scene, camera, and renderer. Implement basic controls and lighting system.",
+        "testStrategy": "Test scene initialization, camera controls, and basic rendering performance.",
+        "priority": "high",
+        "dependencies": [
+          "5"
+        ],
+        "status": "done",
+        "subtasks": [],
+        "complexity": 5,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Break down this task with a focus on set up three.js scene."
+      },
+      {
+        "id": 17,
+        "title": "Implement 2D to 3D Conversion",
+        "description": "Create algorithm for converting 2D floorplan data from wallGraphStore into single-floor 3D geometry.",
+        "status": "pending",
+        "dependencies": [
+          "16"
+        ],
+        "priority": "high",
+        "details": "Implement wall extrusion and opening creation for a single level using data from wallGraphStore. Floor and ceiling generation should be included for the single floor only. Explicitly defer multi-floor stacking and related logic to future tasks.",
+        "testStrategy": "Test conversion accuracy, geometry generation, and correct handling of wall extrusion and openings for a single floor. Multi-floor stacking is deferred and not included in current tests.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Wall Extrusion from wallGraphStore",
+            "description": "Develop logic to extrude 2D wall segments from wallGraphStore into 3D geometry for a single floor.",
+            "dependencies": [],
+            "details": "Use wallGraphStore data to generate vertical wall meshes with correct height and thickness. Ensure geometry matches input dimensions.\n<info added on 2025-10-31T06:07:04.071Z>\nImplemented comprehensive wall extrusion system:\n\n- Added geometryConverter utility supporting configurable pixel-to-meter conversion, wall mesh generation with accurate positioning and rotation, opening geometry for doors and windows, and floor boundary calculation from the wall graph.\n- Floor and ceiling meshes are now generated based on calculated boundaries.\n- WallGenerator component updated to use the new converter, generating all wall meshes (including visual representations of openings), and handling proper cleanup of old meshes.\n- Openings for doors and windows are currently shown as separate semi-transparent meshes for visualization; true CSG cutouts can be integrated later for actual wall perforations.\n- All coordinate conversions now robustly handle transformation from 2D pixel space to 3D meter space.\n</info added on 2025-10-31T06:07:04.071Z>",
+            "status": "done",
+            "testStrategy": "Verify that all wall segments are correctly extruded and positioned in the 3D model."
+          },
+          {
+            "id": 2,
+            "title": "Opening Creation for Doors and Windows",
+            "description": "Implement algorithm to create openings in extruded walls for doors and windows as defined in wallGraphStore.",
+            "dependencies": [
+              1
+            ],
+            "details": "Parse opening definitions from wallGraphStore and subtract corresponding geometry from wall meshes.\n<info added on 2025-10-31T06:07:23.745Z>\nOpening creation is now integrated into the wall generation system. Opening geometry is generated for each entry in wall.openings: doors are modeled as full-height cutouts from sill to wall top, while windows use a standard 1.5m height at the specified sill. Each opening is visualized as a semi-transparent mesh, positioned along the wall centerline using opening.position and rotated to match wall orientation. Doors are colored brown (#8b4513) and windows sky blue (#87ceeb) for clear differentiation. Openings are currently represented as separate meshes for visualization; actual wall geometry subtraction (CSG cutouts) is not yet implemented and will require a CSG library in a future optimization phase.\n</info added on 2025-10-31T06:07:23.745Z>",
+            "status": "done",
+            "testStrategy": "Check that all specified openings are present and correctly sized/placed in the 3D model."
+          },
+          {
+            "id": 3,
+            "title": "Floor and Ceiling Generation",
+            "description": "Generate floor and ceiling geometry for the single-floor model.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create planar meshes for the floor and ceiling based on the outer boundary of the wallGraphStore data.\n<info added on 2025-10-31T06:07:27.332Z>\nFloor and ceiling generation implemented:\n\nFloor generation calculates the boundary from wall graph nodes using a convex hull approach, creates the floor mesh with THREE.ExtrudeGeometry from the boundary shape, applies a default thickness of 20cm (0.2m), positions it at y=0 (ground level), and uses a beige color (#f5f5dc) for the floor material.\n\nCeiling generation uses the same boundary calculation as the floor, creates the ceiling mesh at the top of the walls (wallHeight), applies a default thickness of 10cm (0.1m), and uses a white color (#ffffff) for the ceiling material. Both floor and ceiling use DoubleSide material for proper rendering.\n\nBoundary calculation handles edge cases (0-3 nodes), removes duplicate points at the same coordinates, and sorts points by angle from the centroid for proper polygon formation, ensuring compatibility with any wall graph configuration.\n\nThe floor and ceiling automatically update when walls change, providing a complete enclosed space.\n</info added on 2025-10-31T06:07:27.332Z>",
+            "status": "done",
+            "testStrategy": "Ensure floor and ceiling meshes are correctly generated and aligned with wall geometry."
+          },
+          {
+            "id": 4,
+            "title": "Geometry Validation",
+            "description": "Validate the generated 3D geometry for consistency and correctness.",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Check for mesh errors, overlapping geometry, and ensure all elements are watertight.",
+            "status": "pending",
+            "testStrategy": "Run automated geometry checks and visual inspections."
+          },
+          {
+            "id": 5,
+            "title": "Performance Optimization",
+            "description": "Optimize the conversion algorithm for speed and memory usage.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Profile the conversion process and refactor code to minimize bottlenecks.",
+            "status": "pending",
+            "testStrategy": "Benchmark conversion times and memory usage on representative floorplans."
+          },
+          {
+            "id": 6,
+            "title": "Defer Multi-floor Stacking",
+            "description": "Explicitly defer implementation of multi-floor stacking and related logic.",
+            "dependencies": [],
+            "details": "Document that multi-floor stacking is not included in this implementation and will be handled in a future task.",
+            "status": "pending",
+            "testStrategy": "Confirm that no multi-floor logic is present in the codebase for this task."
+          }
+        ]
+      },
+      {
+        "id": 18,
+        "title": "Create Sun Path Simulation",
+        "description": "Implement sun position calculation and visualization",
+        "details": "Integrate suncalc.js, create sun position visualization, implement shadow casting. Add time/date controls.",
+        "testStrategy": "Test sun position accuracy, shadow rendering, and time-based animation.",
+        "priority": "high",
+        "dependencies": [
+          "16",
+          "17"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 5,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Break down this task with a focus on create sun path simulation."
+      },
+      {
+        "id": 19,
+        "title": "Implement 3D Model Export",
+        "description": "Create functionality to export 3D models in GLTF and OBJ formats",
+        "details": "Implement model export pipeline, format conversion, material handling. Add download functionality.",
+        "testStrategy": "Test export functionality, verify file formats, test large model handling.",
+        "priority": "medium",
+        "dependencies": [
+          "17"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 7,
+        "recommendedSubtasks": 4,
+        "expansionPrompt": "Expand into subtasks for export pipeline setup, format conversion (GLTF, OBJ), material and texture handling, and download functionality."
+      },
+      {
+        "id": 20,
+        "title": "Create Massing Tools",
+        "description": "Implement basic geometric shapes for massing studies",
+        "details": "Create primitive shape tools (box, cylinder, sphere), implement transformation controls. Add volume calculations.",
+        "testStrategy": "Test shape creation, transformation tools, and volume calculations.",
+        "priority": "medium",
+        "dependencies": [
+          "16"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 5,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Break down this task with a focus on create massing tools."
+      },
+      {
+        "id": 21,
+        "title": "Implement Analysis Dashboard",
+        "description": "Create dashboard for displaying building analysis metrics",
+        "details": "Implement calculations for FAR, surface area, coverage ratio. Create analysis visualization components.",
+        "testStrategy": "Test calculation accuracy, verify metric updates, test visualization components.",
+        "priority": "medium",
+        "dependencies": [
+          "17",
+          "20"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 6,
+        "recommendedSubtasks": 4,
+        "expansionPrompt": "Break down the dashboard implementation into subtasks for metric calculations (FAR, surface area, coverage ratio), visualization component development, data integration, and UI/UX testing."
+      },
+      {
+        "id": 22,
+        "title": "Set up Project Versioning",
+        "description": "Implement system for managing project versions and history",
+        "details": "Create version control system, implement save points, add rollback functionality. Handle version metadata.",
+        "testStrategy": "Test version creation, rollback functionality, and data integrity.",
+        "priority": "medium",
+        "dependencies": [
+          "6"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 5,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Break down this task with a focus on set up project versioning."
+      },
+      {
+        "id": 23,
+        "title": "Implement Auto-save System",
+        "description": "Create automatic project saving functionality",
+        "details": "Implement debounced auto-save, handle conflict resolution, add save indicators. Create recovery system.",
+        "testStrategy": "Test auto-save timing, conflict handling, and recovery functionality.",
+        "priority": "medium",
+        "dependencies": [
+          "22"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 7,
+        "recommendedSubtasks": 5,
+        "expansionPrompt": "Decompose the auto-save system into subtasks for debounced save logic, conflict resolution, save indicators, recovery system, and integration testing."
+      },
+      {
+        "id": 24,
+        "title": "Create Data Caching System",
+        "description": "Implement caching for geospatial and project data",
+        "details": "Create cache management system, implement cache invalidation, handle storage limits. Add offline support.",
+        "testStrategy": "Test cache operations, verify data freshness, test storage limits.",
+        "priority": "medium",
+        "dependencies": [
+          "9"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 5,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Break down this task with a focus on create data caching system."
+      },
+      {
+        "id": 25,
+        "title": "Implement Error Handling",
+        "description": "Create comprehensive error handling and user feedback system",
+        "details": "Implement error boundary components, create error logging system, add user-friendly error messages.",
+        "testStrategy": "Test error scenarios, verify error reporting, test recovery procedures.",
+        "priority": "medium",
+        "dependencies": [
+          "5"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 5,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Divide error handling into subtasks for error boundary components, error logging system, and user-facing error messages."
+      },
+      {
+        "id": 26,
+        "title": "Set up Analytics and Monitoring",
+        "description": "Implement local system monitoring and basic usage analytics for development environment",
+        "status": "pending",
+        "dependencies": [
+          "1"
+        ],
+        "priority": "low",
+        "details": "Create a simple local analytics and monitoring system focused on development needs. Implement basic event tracking for core user interactions and error logging functionality. Set up a local monitoring dashboard for development testing. Vercel Analytics integration will be implemented later for production.",
+        "testStrategy": "Test local event tracking implementation, verify error logging capture and storage, validate monitoring dashboard data display. Test event tracking accuracy and logging performance.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Basic Event Tracking System",
+            "description": "Create a simple event tracking system for local development environment",
+            "dependencies": [],
+            "details": "Implement basic event tracking functionality using local storage or IndexedDB. Track key user interactions like page views, feature usage, and error events. Create helper functions for event logging and retrieval.",
+            "status": "pending",
+            "testStrategy": "Unit test event tracking functions, verify event data structure, test storage and retrieval functionality",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Set up Error Logging System",
+            "description": "Implement local error logging and monitoring functionality",
+            "dependencies": [],
+            "details": "Create error logging system that captures JavaScript errors, API failures, and application state during errors. Implement log storage and viewing interface for development debugging.",
+            "status": "pending",
+            "testStrategy": "Test error capture in various scenarios, verify log storage, validate error detail capture",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Create Development Monitoring Dashboard",
+            "description": "Build simple dashboard for viewing analytics and logs during development",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Create a basic dashboard interface for viewing tracked events and error logs. Implement filtering and search functionality. Add basic visualizations for event trends and error frequency.",
+            "status": "pending",
+            "testStrategy": "Test dashboard rendering, verify data display accuracy, test filtering and search functionality",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 4,
+        "recommendedSubtasks": 0,
+        "expansionPrompt": "No further expansion needed; subtasks are already defined for event tracking, error logging, and dashboard."
+      },
+      {
+        "id": 27,
+        "title": "Create User Onboarding Flow",
+        "description": "Implement guided tour and onboarding experience",
+        "details": "Create product tour components, implement feature highlighting, add progress tracking.",
+        "testStrategy": "Test tour flow, verify highlighting behavior, test progress tracking.",
+        "priority": "low",
+        "dependencies": [
+          "5"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 4,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Break down into subtasks for guided tour component, feature highlighting, and progress tracking implementation."
+      },
+      {
+        "id": 28,
+        "title": "Implement Help System",
+        "description": "Create in-app help documentation and tooltips",
+        "details": "Build help documentation system, implement contextual tooltips, create search functionality.",
+        "testStrategy": "Test help content access, verify tooltip behavior, test search functionality.",
+        "priority": "low",
+        "dependencies": [
+          "5"
+        ],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 4,
+        "recommendedSubtasks": 3,
+        "expansionPrompt": "Divide into subtasks for help documentation system, contextual tooltips, and search functionality."
+      },
+      {
+        "id": 29,
+        "title": "Set up Stripe Integration",
+        "description": "Set up Stripe test environment for local development and implement basic payment processing functionality",
+        "status": "pending",
+        "dependencies": [
+          "2"
+        ],
+        "priority": "low",
+        "details": "Configure Stripe SDK in test mode using test API keys. Create test subscription plans and implement checkout flow for local development. Focus on establishing core payment infrastructure that can be later configured for production use. Implement test mode webhooks and basic error handling.",
+        "testStrategy": "Test payment processing using Stripe test cards and tokens. Verify subscription plan creation and management in test mode. Test checkout flow with various test scenarios (successful payments, declined cards, etc.). Validate webhook handling and error scenarios.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Configure Stripe SDK with test credentials",
+            "description": "Set up Stripe SDK integration using test mode API keys and configure development environment",
+            "dependencies": [],
+            "details": "Install Stripe SDK, configure test mode API keys in environment variables, set up webhook endpoints for test mode, implement basic error handling and logging for development",
+            "status": "pending",
+            "testStrategy": "Verify SDK initialization with test keys, confirm webhook endpoint configuration, test basic error handling",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Create test subscription plans",
+            "description": "Define and create test subscription plans in Stripe dashboard for development",
+            "dependencies": [
+              1
+            ],
+            "details": "Create test subscription products and price points in Stripe dashboard, document test plan IDs, implement subscription plan fetching and display logic",
+            "status": "pending",
+            "testStrategy": "Verify test plans are created correctly, test plan fetching and display, validate plan attributes",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Implement test mode checkout flow",
+            "description": "Create checkout flow using Stripe test mode integration",
+            "dependencies": [
+              2
+            ],
+            "details": "Implement Stripe Checkout session creation, handle success and cancel URLs, integrate test mode payment processing, implement basic error handling for failed payments",
+            "status": "pending",
+            "testStrategy": "Test checkout flow with various test cards, verify success and failure handling, test session expiration",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 5,
+        "recommendedSubtasks": 0,
+        "expansionPrompt": "No further expansion needed; subtasks are already defined for SDK setup, test plans, and checkout flow."
+      },
+      {
+        "id": 30,
+        "title": "Implement Feature Gating",
+        "description": "Create system for managing feature access based on subscription tier using local test data",
+        "status": "pending",
+        "dependencies": [
+          "29"
+        ],
+        "priority": "low",
+        "details": "Implement feature gating logic for local development environment. Create subscription tier validation system using test data structures. Set up feature access control with mock subscription data. Prepare system architecture to later integrate with real subscription service. Include local testing tools for different subscription tiers.",
+        "testStrategy": "Test feature access rules with mock subscription data. Verify feature restriction behavior across different test tiers. Test upgrade prompt UI with mock data. Ensure system architecture allows for future real subscription integration.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Mock Subscription Data Structure",
+            "description": "Define and implement test data structure for simulating subscription tiers and feature access rules",
+            "dependencies": [],
+            "details": "Create JSON schema for mock subscription data. Include different subscription tiers, feature mappings, and access rules. Implement helper functions for managing test data. Add configuration for easily switching between test subscription levels.",
+            "status": "pending",
+            "testStrategy": "Unit test mock data structure. Verify all subscription tiers are properly represented. Test helper functions for data access.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 2,
+            "title": "Implement Local Feature Gate Logic",
+            "description": "Create core feature gating system using local test data implementation",
+            "dependencies": [
+              1
+            ],
+            "details": "Develop feature gate checking mechanism using mock subscription data. Implement permission validation logic. Create feature access middleware. Add debugging tools for local feature gate testing.",
+            "status": "pending",
+            "testStrategy": "Test feature gate logic across all test subscription tiers. Verify permission checking accuracy. Test edge cases and invalid permissions.",
+            "parentId": "undefined"
+          },
+          {
+            "id": 3,
+            "title": "Create Feature Gate UI Components",
+            "description": "Implement UI components for handling restricted features and upgrade prompts",
+            "dependencies": [
+              2
+            ],
+            "details": "Create components for displaying feature restrictions. Implement upgrade prompt modals using mock subscription data. Add visual indicators for gated features. Include test mode indicator for local development.",
+            "status": "pending",
+            "testStrategy": "Test UI components with different subscription scenarios. Verify upgrade prompt functionality. Test responsive design and accessibility.",
+            "parentId": "undefined"
+          }
+        ],
+        "complexity": 4,
+        "recommendedSubtasks": 0,
+        "expansionPrompt": "No further expansion needed; subtasks are already well-defined for mock data, gating logic, and UI components."
+      },
+      {
+        "id": 31,
+        "title": "Re-implement Authentication System",
+        "description": "Re-enable the Clerk authentication system that was temporarily disabled for development",
+        "details": "This task involves re-enabling the Clerk authentication system that was temporarily disabled for development. The authentication was disabled to allow faster feature development and testing without authentication barriers. Key requirements: Re-enable ClerkProvider in layout.tsx, restore middleware authentication with proper route protection, update database schema to make userId required again, replace demo user logic with real authentication, test authentication flows (sign-in, sign-up, protected routes), update all components that were temporarily modified, ensure proper user session management, test user-specific data access and project ownership. This should be done after core architectural design features are built and tested.",
+        "testStrategy": "Test user registration, login, logout flows. Verify protected routes redirect unauthorized users. Test session persistence and user-specific data access.",
+        "priority": "low",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": [],
+        "complexity": 6,
+        "recommendedSubtasks": 5,
+        "expansionPrompt": "Expand into subtasks for ClerkProvider re-enablement, middleware/auth route protection, schema updates, component refactoring, and authentication flow testing."
+      }
+    ],
+    "metadata": {
+      "version": "1.0.0",
+      "lastModified": "2025-10-16T03:01:45.583Z",
+      "taskCount": 31,
+      "completedCount": 7,
+      "tags": [
+        "master"
+      ],
+      "created": "2025-10-16T03:03:28.156Z",
+      "description": "Tasks for master context",
+      "updated": "2025-10-31T06:07:11.918Z"
+    }
+  }
+}

@@ -1,0 +1,474 @@
+# Architectural Design Web-App - Cursor AI Rules
+
+## Project Overview
+Building a web-based architectural design tool with 4 core features:
+1. Site Analysis (geospatial data)
+2. 2D Floorplan Editor (Fabric.js)
+3. 3D Model Generation (Three.js)
+4. Massing Diagrams
+
+Tech Stack: Next.js 14, React 18, TypeScript, Zustand, Leaflet + OpenStreetMap, Fabric.js, Three.js, Tailwind CSS, Prisma, PostgreSQL
+
+## File Organization
+
+### Feature-Based Structure
+```
+/src
+  /features/{feature-name}/
+    /components/          # React components
+    /hooks/              # Custom hooks
+    /services/           # Business logic
+    /store/              # Zustand state
+    /types/              # TypeScript types
+    /utils/              # Feature utilities
+    index.ts             # Public API
+  
+  /shared/               # Only truly shared code
+  /rendering-engines/    # Mapbox, Fabric.js, Three.js wrappers
+  /lib/                  # External integrations
+  /app/                  # Next.js routes
+```
+
+### File Naming
+- Components: `PascalCase.tsx` (SiteMap.tsx)
+- Hooks: `useCamelCase.ts` (useSiteData.ts)
+- Services: `camelCaseService.ts` (geoDataService.ts)
+- Stores: `camelCaseStore.ts` (siteStore.ts)
+- Types: `PascalCase.ts` or `index.ts`
+- Utils: `camelCase.ts` (snapToGrid.ts)
+
+## Core Coding Rules
+
+### TypeScript
+- ALWAYS use TypeScript strict mode
+- NEVER use `any` (use `unknown` instead)
+- Explicitly type all function parameters and returns
+- Use interfaces for objects, types for unions/primitives
+
+### React Components
+```typescript
+// Template structure:
+import { useState, useEffect } from 'react';
+import { useFeatureStore } from '../store/featureStore';
+import type { FeatureData } from '../types';
+
+interface ComponentProps {
+  id: string;
+  data?: FeatureData;
+  onUpdate?: (data: FeatureData) => void;
+}
+
+export const Component = ({ id, data, onUpdate }: ComponentProps) => {
+  // 1. Hooks
+  const [loading, setLoading] = useState(false);
+  const { items } = useFeatureStore();
+  
+  // 2. Effects
+  useEffect(() => {
+    loadData();
+  }, [id]);
+  
+  // 3. Handlers
+  const handleUpdate = async () => {
+    try {
+      setLoading(true);
+      // logic
+    } catch (error) {
+      console.error('handleUpdate:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  // 4. Early returns
+  if (loading) return <div>Loading...</div>;
+  
+  // 5. Render
+  return <div>{/* JSX */}</div>;
+};
+```
+
+### Zustand Stores
+```typescript
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+interface Store {
+  items: Data[];
+  isLoading: boolean;
+  error: string | null;
+  
+  setItems: (items: Data[]) => void;
+  addItem: (item: Data) => void;
+  reset: () => void;
+}
+
+export const useStore = create<Store>()(
+  persist(
+    (set) => ({
+      items: [],
+      isLoading: false,
+      error: null,
+      
+      setItems: (items) => set({ items }),
+      addItem: (item) => set((state) => ({ 
+        items: [...state.items, item] 
+      })),
+      reset: () => set({ items: [], isLoading: false, error: null }),
+    }),
+    { name: 'store-name' }
+  )
+);
+```
+
+### Services
+```typescript
+export class FeatureService {
+  static async fetchAll(): Promise<Data[]> {
+    try {
+      const response = await fetch('/api/feature/items');
+      if (!response.ok) throw new Error('Failed to fetch');
+      return await response.json();
+    } catch (error) {
+      console.error('FeatureService.fetchAll:', error);
+      throw error;
+    }
+  }
+  
+  static async create(data: CreateData): Promise<Data> {
+    try {
+      const response = await fetch('/api/feature/items', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) throw new Error('Failed to create');
+      return await response.json();
+    } catch (error) {
+      console.error('FeatureService.create:', error);
+      throw error;
+    }
+  }
+}
+```
+
+### API Routes
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { getSession } from '@/lib/auth';
+
+const Schema = z.object({
+  name: z.string().min(1).max(255),
+});
+
+export async function GET(request: NextRequest) {
+  try {
+    const session = await getSession(request);
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    
+    const items = await prisma.item.findMany({
+      where: { userId: session.userId },
+    });
+    
+    return NextResponse.json({ success: true, data: items });
+  } catch (error) {
+    console.error('GET /api/items:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' }, 
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const session = await getSession(request);
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    
+    const body = await request.json();
+    const validation = Schema.safeParse(body);
+    
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Invalid data', details: validation.error },
+        { status: 400 }
+      );
+    }
+    
+    const item = await prisma.item.create({
+      data: { ...validation.data, userId: session.userId },
+    });
+    
+    return NextResponse.json({ success: true, data: item }, { status: 201 });
+  } catch (error) {
+    console.error('POST /api/items:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+```
+
+### Error Handling
+```typescript
+// ALWAYS wrap async operations in try-catch
+const handleAction = async () => {
+  try {
+    setLoading(true);
+    const result = await someAsyncOperation();
+    // success
+  } catch (error) {
+    console.error('handleAction:', error);
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    setError(message);
+  } finally {
+    setLoading(false);
+  }
+};
+```
+
+### Custom Hooks
+```typescript
+export const useFeatureData = (id?: string) => {
+  const [data, setData] = useState<Data | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  
+  useEffect(() => {
+    if (id) loadData(id);
+  }, [id]);
+  
+  const loadData = async (dataId: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const result = await FeatureService.fetchById(dataId);
+      setData(result);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Unknown error'));
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  return { data, loading, error, refresh: () => id && loadData(id) };
+};
+```
+
+## Import/Export Rules
+
+### Exports
+```typescript
+// ✅ GOOD - Named exports
+export const Component = () => { };
+export function Component() { }
+
+// ❌ BAD - Default exports (except pages)
+export default function Component() { }
+```
+
+### Imports
+```typescript
+// ✅ GOOD - Explicit imports
+import { calculateArea, snapToGrid } from './utils';
+import { SiteMap } from '@/features/site-analysis';
+
+// ❌ BAD - Wildcard imports
+import * as Utils from './utils';
+
+// ❌ BAD - Deep imports into other features
+import { service } from '@/features/other/services/service';
+```
+
+### Path Aliases
+```typescript
+// Use these aliases:
+@/*                  // src/*
+@/features/*        // src/features/*
+@/shared/*          // src/shared/*
+@/lib/*             // src/lib/*
+```
+
+### Feature Public API
+```typescript
+// /features/feature-name/index.ts
+// ONLY export what other features need
+
+export { FeatureMain } from './components/FeatureMain';
+export { useFeatureData } from './hooks/useFeatureData';
+export { useFeatureStore } from './store/featureStore';
+export type { FeatureData, FeatureConfig } from './types';
+
+// DO NOT export internal implementation:
+// - Internal services
+// - Internal utilities
+// - Private components
+```
+
+## Performance
+
+```typescript
+// 1. Memoize expensive computations
+const value = useMemo(() => expensiveCalc(data), [data]);
+
+// 2. Memoize callbacks
+const handleClick = useCallback(() => doSomething(id), [id]);
+
+// 3. Proper keys in lists
+{items.map(item => <Item key={item.id} {...item} />)}
+
+// 4. Debounce expensive operations
+const debouncedSearch = useMemo(() => debounce(search, 300), []);
+
+// 5. Lazy load heavy components
+const Model3D = lazy(() => import('./Model3DViewer'));
+
+// 6. Use Web Workers for heavy computations
+const worker = useMemo(
+  () => new Worker(new URL('../workers/worker.ts', import.meta.url)),
+  []
+);
+```
+
+## Comments
+
+```typescript
+/**
+ * JSDoc for:
+ * - All exported functions
+ * - Complex algorithms
+ * - Non-obvious code
+ */
+
+// Single-line for:
+// - Brief explanations
+// - TODOs
+// - Clarifications
+
+// ❌ BAD - Obvious comments
+// Set loading to true
+setLoading(true);
+
+// ✅ GOOD - Helpful comments
+// Debounce to avoid excessive API calls during typing
+const debouncedSave = debounce(saveProject, 2000);
+
+// TODO: Add validation for negative coordinates
+// FIXME: Memory leak when unmounting during async
+// NOTE: Workaround needed until Fabric.js v7
+```
+
+## Critical Rules
+
+### ALWAYS:
+✅ Create files in appropriate feature folder
+✅ Use TypeScript with explicit types
+✅ Add error handling to async functions
+✅ Follow naming conventions
+✅ Export through feature's index.ts
+✅ Import from @/features/feature-name
+✅ Add JSDoc for exported functions
+✅ Use try-catch for async operations
+✅ Validate user input with Zod
+✅ Check authentication in API routes
+
+### NEVER:
+❌ Use 'any' type (use 'unknown')
+❌ Create files outside feature folders (unless /shared)
+❌ Import directly from other feature's internal files
+❌ Use default exports (except pages)
+❌ Mix feature logic with rendering engine logic
+❌ Commit without error handling
+❌ Create components without TypeScript types
+❌ Use wildcard imports (import *)
+❌ Skip input validation in API routes
+❌ Expose internal implementation in public API
+
+## Testing
+
+```typescript
+// /features/feature/__tests__/Component.test.tsx
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { Component } from '../components/Component';
+
+describe('Component', () => {
+  it('renders correctly', () => {
+    render(<Component id="test" />);
+    expect(screen.getByText('Content')).toBeInTheDocument();
+  });
+  
+  it('handles interaction', async () => {
+    const onUpdate = jest.fn();
+    render(<Component id="test" onUpdate={onUpdate} />);
+    
+    await userEvent.click(screen.getByRole('button'));
+    
+    await waitFor(() => {
+      expect(onUpdate).toHaveBeenCalled();
+    });
+  });
+});
+```
+
+## Feature-Specific Guidelines
+
+### Site Analysis (Feature 1)
+- Use Leaflet + OpenStreetMap for mapping
+- Use Leaflet.draw plugin for site boundary selection
+- Use Nominatim for free geocoding
+- Cache geospatial data in database
+- Handle API rate limits for external services
+
+### Floorplan 2D (Feature 2)
+- Use Fabric.js for canvas rendering
+- Implement snap-to-grid in drawing tools
+- Store data as vectors, not pixel data
+- Separate edit/view modes
+
+### 3D Model (Feature 3)
+- Use Three.js for rendering
+- Generate 3D from 2D floorplan data
+- Implement sun simulation with real coordinates
+- Use Web Workers for geometry generation
+
+### Massing (Feature 4)
+- Reuse Three.js engine from Feature 3
+- Keep primitives simple for performance
+- Calculate volumes accurately
+
+## New Feature Creation Order
+
+1. Create `/features/feature-name/` folder
+2. Define types in `/types/index.ts`
+3. Create store in `/store/featureStore.ts`
+4. Implement services in `/services/`
+5. Create hooks in `/hooks/`
+6. Build components in `/components/`
+7. Export public API in `index.ts`
+8. Create route in `/app/`
+
+## When in Doubt
+
+1. Is this shared by 3+ features? → Put in /shared
+2. Is this specific to one feature? → Put in that feature folder
+3. Is this a rendering concern? → Put in /rendering-engines
+4. Is this external integration? → Put in /lib
+5. Should other features access this? → Export in feature's index.ts
+6. Is this implementation detail? → Keep internal, don't export
+
+## Remember
+
+- Features are self-contained modules
+- Only communicate through public APIs
+- Shared code goes in /shared (sparingly)
+- Always handle errors
+- Always validate input
+- Always check authentication
+- Performance matters - memoize, debounce, lazy load
