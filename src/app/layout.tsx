@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-// import { ClerkProvider } from '@/lib/clerk-provider'; // Temporarily disabled for development
+import { ClerkProvider } from '@/lib/clerk-provider';
 import './globals.css';
 import ErrorBoundary from '@/shared/components/ErrorBoundary';
 
@@ -53,13 +53,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <body className="min-h-screen bg-background font-sans antialiased">
-        {/* <ClerkProvider> */}
+        <ClerkProvider>
           <ErrorBoundary>
             <div id="root" className="relative flex min-h-screen flex-col">
               {children}
             </div>
           </ErrorBoundary>
-        {/* </ClerkProvider> */}
+        </ClerkProvider>
       </body>
     </html>
   );
