@@ -929,8 +929,9 @@ export async function parseDXFFromURL(url: string): Promise<DXFData> {
   }
 
   try {
-    // Fetch the DXF file
-    const response = await fetch(url);
+    // Use proxy API to fetch DXF file (bypasses CORS issues)
+    const proxyUrl = `/api/cad-blocks/dxf?url=${encodeURIComponent(url)}`;
+    const response = await fetch(proxyUrl);
     if (!response.ok) {
       throw new Error(`Failed to fetch DXF file: ${response.statusText}`);
     }
