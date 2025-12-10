@@ -558,10 +558,10 @@ function convertDXFEntityToKonvaData(
 
       const center = transformPoint(entity.center, insertionPoint, scale, rotationDeg, yFlip);
       const majorEnd = transformPoint(entity.majorAxisEndPoint, insertionPoint, scale, rotationDeg, yFlip);
-      
+
       // Calculate major and minor radii (before transformation)
       const majorRadius = Math.sqrt(
-        Math.pow(entity.majorAxisEndPoint.x - entity.center.x, 2) + 
+        Math.pow(entity.majorAxisEndPoint.x - entity.center.x, 2) +
         Math.pow(entity.majorAxisEndPoint.y - entity.center.y, 2)
       ) * scale;
       const minorRadius = majorRadius * entity.axisRatio;
@@ -572,7 +572,7 @@ function convertDXFEntityToKonvaData(
       // Create ellipse as SVG path
       const startParam = entity.startParameter !== undefined ? entity.startParameter : 0;
       const endParam = entity.endParameter !== undefined ? entity.endParameter : Math.PI * 2;
-      
+
       // Sample ellipse points
       const segments = 64;
       const pathPoints: string[] = [];
@@ -586,7 +586,7 @@ function convertDXFEntityToKonvaData(
           pathPoints.push(`L ${x} ${y}`);
         }
       }
-      
+
       return {
         type: 'path',
         data: pathPoints.join(' '),
@@ -595,9 +595,118 @@ function convertDXFEntityToKonvaData(
       };
     }
 
+    case 'SOLID':
+    case '3DFACE': {
+      // SOLID and 3DFACE entities define filled shapes with corner points
+      // They typically have points defined as 'vertices' or individual point properties
+      const vertices = (entity as any).vertices || [];
+
+      // Try to extract vertices from individual point properties if vertices array is empty
+      if (vertices.length === 0 && (entity as any).points) {
+        const points = (entity as any).points;
+        if (Array.isArray(points)) {
+          vertices.push(...points);
+        }
+      }
+
+      if (vertices.length < 3) {
+        // SOLID/3DFACE entities must have at least 3 corners
+        return null;
+      }
+
+      const points: number[] = [];
+      for (const vertex of vertices) {
+        if (vertex && typeof vertex === 'object' && 'x' in vertex && 'y' in vertex) {
+          const point = transformPoint(vertex, insertionPoint, scale, rotationDeg, yFlip);
+          points.push(point[0], point[1]);
+        }
+      }
+
+      if (points.length >= 6) {
+        return {
+          type: 'line',
+          points: points,
+          stroke: color,
+          strokeWidth: 1,
+          closed: true,
+        };
+      }
+      return null;
+    }
+
+    case 'HATCH': {
+      // HATCH entities define filled/hatched regions
+      // For now, we'll render the boundary as a closed polyline
+      const boundary = (entity as any).boundary || (entity as any).boundaries?.[0];
+      if (!boundary || !boundary.vertices || boundary.vertices.length < 3) {
+        return null;
+      }
+
+      const points: number[] = [];
+      for (const vertex of boundary.vertices) {
+        if (vertex && typeof vertex === 'object' && 'x' in vertex && 'y' in vertex) {
+          const point = transformPoint(vertex, insertionPoint, scale, rotationDeg, yFlip);
+          points.push(point[0], point[1]);
+        }
+      }
+
+      if (points.length >= 6) {
+        return {
+          type: 'line',
+          points: points,
+          stroke: color,
+          strokeWidth: 1,
+          closed: true,
+        };
+      }
+      return null;
+    }
+
+    case 'POINT': {
+      // POINT entities - render as small circles
+      const position = (entity as any).position || { x: (entity as any).x, y: (entity as any).y };
+      if (!position || position.x === undefined || position.y === undefined) {
+        return null;
+      }
+
+      const center = transformPoint(position, insertionPoint, scale, rotationDeg, yFlip);
+      return {
+        type: 'circle',
+        x: center[0],
+        y: center[1],
+        radius: 2 * scale, // Small fixed size
+        stroke: color,
+        strokeWidth: 1,
+        fill: color,
+      };
+    }
+
+    case 'TEXT':
+    case 'MTEXT': {
+      // TEXT entities - we'll skip these for now as rendering text accurately is complex
+      // Would need font loading, text measurement, etc.
+      // Just log that we're skipping them
+      return null;
+    }
+
+    case 'DIMENSION':
+    case 'LEADER':
+    case 'MLINE': {
+      // Complex annotation entities - skip for now
+      return null;
+    }
+
+    case 'INSERT': {
+      // INSERT entities should be handled at a higher level
+      // Don't try to convert them directly
+      return null;
+    }
+
     default:
-      // Unsupported entity type
-      console.warn(`Unsupported DXF entity type: ${entity.type}`);
+      // Unsupported entity type - log for debugging
+      if (entity.type) {
+        console.warn(`[DXF] Unsupported entity type: ${entity.type}`);
+      }
       return null;
   }
 }
@@ -615,16 +724,26 @@ function processDXFBlocks(
     return blockMap;
   }
 
+  console.log('[DXF Blocks] Processing', dxfData.blocks.length, 'block definitions');
+
   for (const block of dxfData.blocks) {
     const shapes: KonvaShapeData[] = [];
-    const basePoint: Point = block.basePoint
-      ? [block.basePoint.x, yFlip ? flipY(block.basePoint.y) : block.basePoint.y]
-      : [0, 0];
+    // Use [0,0] as base point - blocks are defined relative to their own origin
+    // The INSERT entity will position the block correctly
+    const basePoint: Point = [0, 0];
+
+    let successCount = 0;
+    let failCount = 0;
 
     for (const entity of block.entities) {
-      const shape = convertDXFEntityToKonvaData(entity, basePoint, 1, 0, false); // Don't flip again, already flipped basePoint
+      // IMPORTANT: Pass yFlip=true to properly handle coordinate system
+      // Blocks need Y-flipping just like regular entities
+      const shape = convertDXFEntityToKonvaData(entity, basePoint, 1, 0, yFlip);
       if (shape) {
         shapes.push(shape);
+        successCount++;
+      } else {
+        failCount++;
       }
     }
 
@@ -639,9 +758,13 @@ function processDXFBlocks(
         scaleX: 1,
         scaleY: 1,
       });
+      console.log(`[DXF Blocks] Processed block "${block.name}": ${successCount} shapes created, ${failCount} entities skipped`);
+    } else {
+      console.warn(`[DXF Blocks] Block "${block.name}" has no renderable shapes (${failCount} entities failed)`);
     }
   }
 
+  console.log('[DXF Blocks] Total blocks processed:', blockMap.size);
   return blockMap;
 }
 
@@ -777,9 +900,51 @@ function getEntityBounds(entity: DXFEntity): BoundingBox | null {
       break;
     }
 
+    case 'SOLID':
+    case '3DFACE': {
+      const vertices = (entity as any).vertices || [];
+      if (vertices.length > 0) {
+        for (const vertex of vertices) {
+          if (vertex && typeof vertex === 'object' && 'x' in vertex && 'y' in vertex) {
+            updateBounds(vertex.x, vertex.y);
+          }
+        }
+      }
+      break;
+    }
+
+    case 'HATCH': {
+      const boundary = (entity as any).boundary || (entity as any).boundaries?.[0];
+      if (boundary && boundary.vertices) {
+        for (const vertex of boundary.vertices) {
+          if (vertex && typeof vertex === 'object' && 'x' in vertex && 'y' in vertex) {
+            updateBounds(vertex.x, vertex.y);
+          }
+        }
+      }
+      break;
+    }
+
+    case 'POINT': {
+      const position = (entity as any).position || { x: (entity as any).x, y: (entity as any).y };
+      if (position && position.x !== undefined && position.y !== undefined) {
+        updateBounds(position.x, position.y);
+      }
+      break;
+    }
+
     case 'INSERT': {
       // Skip INSERT entities for bounds calculation
       // They will be handled separately if needed
+      return null;
+    }
+
+    case 'TEXT':
+    case 'MTEXT':
+    case 'DIMENSION':
+    case 'LEADER':
+    case 'MLINE': {
+      // Skip annotation entities for bounds calculation
       return null;
     }
 
@@ -1131,16 +1296,19 @@ export function convertDXFToKonvaGroups(
 
   // If no INSERT entities found, create a single group from all entities
   if (groups.length === 0 && dxfData.entities) {
-    console.log('[DXF Convert] No INSERT entities, creating group from all entities');
+    console.log('[DXF Convert] No INSERT entities found, processing all entities directly');
     const shapes: KonvaShapeData[] = [];
-    let convertedCount = 0;
-    let skippedCount = 0;
+    const entityStats: { [key: string]: { success: number; failed: number } } = {};
 
     for (const entity of dxfData.entities) {
-      // Skip INSERT entities (already processed)
+      // Skip INSERT entities (already processed or should be handled by blocks)
       if (entity.type === 'INSERT') {
-        skippedCount++;
         continue;
+      }
+
+      // Initialize stats for this entity type
+      if (!entityStats[entity.type]) {
+        entityStats[entity.type] = { success: 0, failed: 0 };
       }
 
       const shape = convertDXFEntityToKonvaData(
@@ -1150,20 +1318,33 @@ export function convertDXFToKonvaGroups(
         rotationDeg,
         yFlip
       );
-      if (shape) {
-        shapes.push(shape);
-        convertedCount++;
-      } else {
-        console.warn('[DXF Convert] Failed to convert entity:', entity.type, entity);
+
+      const stats = entityStats[entity.type];
+      if (stats) { // Type guard
+        if (shape) {
+          shapes.push(shape);
+          stats.success++;
+        } else {
+          stats.failed++;
+        }
       }
     }
 
-    console.log('[DXF Convert] Entity conversion:', {
-      total: dxfData.entities.length,
-      converted: convertedCount,
-      skipped: skippedCount,
-      shapesCreated: shapes.length,
-    });
+    // Log detailed statistics
+    console.log('[DXF Convert] Entity conversion statistics:');
+    const sortedTypes = Object.keys(entityStats).sort();
+    for (const type of sortedTypes) {
+      const stats = entityStats[type];
+      if (!stats) continue; // Type guard for safety
+      const total = stats.success + stats.failed;
+      const successRate = total > 0 ? ((stats.success / total) * 100).toFixed(1) : '0.0';
+      console.log(`  ${type}: ${stats.success}/${total} converted (${successRate}%), ${stats.failed} failed`);
+    }
+
+    const totalEntities = dxfData.entities.length;
+    const totalConverted = shapes.length;
+    const conversionRate = totalEntities > 0 ? ((totalConverted / totalEntities) * 100).toFixed(1) : '0.0';
+    console.log(`[DXF Convert] Overall: ${totalConverted}/${totalEntities} entities converted (${conversionRate}%)`);
 
     if (shapes.length > 0) {
       groups.push({
@@ -1176,13 +1357,13 @@ export function convertDXFToKonvaGroups(
         scaleX: finalScale,
         scaleY: finalScale,
       });
-      console.log('[DXF Convert] Created group with', shapes.length, 'shapes');
+      console.log('[DXF Convert] ✅ Created group with', shapes.length, 'shapes');
     } else {
-      console.warn('[DXF Convert] No shapes created from entities');
+      console.warn('[DXF Convert] ⚠️  No shapes created - all entities failed conversion!');
     }
   }
 
-  console.log('[DXF Convert] Final result:', groups.length, 'groups created');
+  console.log('[DXF Convert] ✅ Final result:', groups.length, 'group(s) created');
   return groups;
 }
 
