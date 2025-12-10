@@ -8,6 +8,7 @@
 import React, { useMemo, useState } from 'react';
 import { useWallGraphStoreContext } from '../context/WallGraphStoreContext';
 import { Library, ArrowLeft, ArrowRight, ArrowUp, ArrowDown } from 'lucide-react';
+import { CadBlocksLibrary } from './CadBlocksLibrary';
 
 // Tooltip component for showing labels on hover
 const Tooltip = ({ label, children }: { label: string, children: React.ReactNode }) => {
@@ -159,6 +160,10 @@ export const OpeningSettings = () => {
   const updateSelectedOpeningSillHeight = useWallGraphStore((state) => state.updateSelectedOpeningSillHeight);
   const deleteSelectedOpenings = useWallGraphStore((state) => state.deleteSelectedOpenings);
 
+  // CAD Blocks Library state
+  const [selectedLibraryCategory, setSelectedLibraryCategory] = useState<string | null>(null);
+  const [selectedLibrarySubcategory, setSelectedLibrarySubcategory] = useState<string | null>(null);
+
   // Determine unit label based on unit system
   const unitLabel = unitSystem === 'imperial' ? 'in' : 'cm';
 
@@ -258,14 +263,14 @@ export const OpeningSettings = () => {
 
   // Element buttons configuration
   const elementButtons = [
-    { id: 1, label: 'Door', value: 'door' as const, icon: '/elmnts_door.svg', reducedBrightness: false, thinnerStroke: false },
-    { id: 2, label: 'Window', value: 'window' as const, icon: '/elmnts_wind.svg', reducedBrightness: false, thinnerStroke: false },
-    { id: 3, label: 'Couches and Chairs', value: null, icon: '/elmnt_couch.svg', reducedBrightness: true, thinnerStroke: true },
-    { id: 4, label: 'Table', value: null, icon: '/elmnts_table.svg', reducedBrightness: false, thinnerStroke: false },
-    { id: 5, label: 'Bed', value: null, icon: '/elmnts_bed.svg', reducedBrightness: true, thinnerStroke: false },
-    { id: 6, label: 'Bathroom', value: null, icon: '/elmnt_vanity.svg', reducedBrightness: false, thinnerStroke: false },
-    { id: 7, label: 'Kitchen', value: null, icon: '/elmnts_kitchen.svg', reducedBrightness: false, thinnerStroke: false },
-    { id: 8, label: 'Miscellaneous', value: null, icon: '/elmnt_misc.svg', reducedBrightness: false, thinnerStroke: false },
+    { id: 1, label: 'Door', value: 'door' as const, icon: '/elmnts_door.svg', reducedBrightness: false, thinnerStroke: false, category: 'door', subcategory: 'door' },
+    { id: 2, label: 'Window', value: 'window' as const, icon: '/elmnts_wind.svg', reducedBrightness: false, thinnerStroke: false, category: 'window', subcategory: 'window' },
+    { id: 3, label: 'Couches and Chairs', value: 'furniture-seating' as const, icon: '/elmnt_couch.svg', reducedBrightness: true, thinnerStroke: true, category: 'furniture', subcategory: 'seating' },
+    { id: 4, label: 'Table', value: 'furniture-tables' as const, icon: '/elmnts_table.svg', reducedBrightness: false, thinnerStroke: false, category: 'furniture', subcategory: 'tables' },
+    { id: 5, label: 'Bed', value: 'furniture-bedroom' as const, icon: '/elmnts_bed.svg', reducedBrightness: true, thinnerStroke: false, category: 'furniture', subcategory: 'bedroom' },
+    { id: 6, label: 'Bathroom', value: 'bathroom' as const, icon: '/elmnt_vanity.svg', reducedBrightness: false, thinnerStroke: false, category: 'bathroom', subcategory: 'bathroom' },
+    { id: 7, label: 'Kitchen', value: 'kitchen' as const, icon: '/elmnts_kitchen.svg', reducedBrightness: false, thinnerStroke: false, category: 'kitchen', subcategory: 'kitchen' },
+    { id: 8, label: 'Miscellaneous', value: 'misc' as const, icon: '/elmnt_misc.svg', reducedBrightness: false, thinnerStroke: false, category: 'misc', subcategory: 'misc' },
   ];
 
   return (
@@ -277,16 +282,19 @@ export const OpeningSettings = () => {
               <Tooltip key={button.id} label={button.label}>
                 <button
                   onClick={() => {
-                    if (button.value !== null) {
+                    // For doors and windows, keep existing opening tool behavior
+                    if (button.value === 'door' || button.value === 'window') {
                       setActiveOpeningType(button.value);
+                      setSelectedLibraryCategory(null); // Hide library
+                    } else {
+                      // For furniture/bathroom/kitchen/misc, show CAD library
+                      setSelectedLibraryCategory(button.category);
+                      setSelectedLibrarySubcategory(button.subcategory);
                     }
                   }}
-                  disabled={button.value === null}
                   className={`aspect-square rounded-md border-2 flex items-center justify-center transition-colors p-3 ${
-                    currentOpeningType === button.value
+                    currentOpeningType === button.value || (selectedLibraryCategory === button.category && selectedLibrarySubcategory === button.subcategory)
                       ? 'border-[#0f7787] bg-[#0f7787]/20'
-                      : button.value === null
-                      ? 'border-gray-700 bg-gray-900 cursor-not-allowed'
                       : 'border-gray-700 hover:bg-gray-700'
                   }`}
                 >
@@ -444,8 +452,18 @@ export const OpeningSettings = () => {
         </div>
       )}
 
-      <hr className="border-gray-800 mx-4" />
-      <PlaceholderRow icon={<Library size={16} />} label="Library" />
+      {selectedLibraryCategory && (
+        <>
+          <hr className="border-gray-800 mx-4 my-4" />
+          <div className="px-2">
+            <h3 className="text-xs font-bold text-gray-400 px-2 mb-2 uppercase">Library</h3>
+            <CadBlocksLibrary
+              category={selectedLibraryCategory}
+              subcategory={selectedLibrarySubcategory}
+            />
+          </div>
+        </>
+      )}
     </>
   );
 };

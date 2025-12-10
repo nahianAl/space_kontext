@@ -241,6 +241,22 @@ exports.Prisma.SketchfabModelScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.CadBlockScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  name: 'name',
+  category: 'category',
+  subcategory: 'subcategory',
+  tags: 'tags',
+  dxfUrl: 'dxfUrl',
+  thumbnailUrl: 'thumbnailUrl',
+  width: 'width',
+  depth: 'depth',
+  isPublic: 'isPublic',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -283,7 +299,8 @@ exports.Prisma.ModelName = {
   File: 'File',
   GeospatialCache: 'GeospatialCache',
   SketchfabToken: 'SketchfabToken',
-  SketchfabModel: 'SketchfabModel'
+  SketchfabModel: 'SketchfabModel',
+  CadBlock: 'CadBlock'
 };
 
 /**

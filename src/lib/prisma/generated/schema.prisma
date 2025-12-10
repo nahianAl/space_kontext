@@ -191,3 +191,31 @@ model SketchfabModel {
   @@map("sketchfab_models")
   @@schema("app")
 }
+
+model CadBlock {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  category    String
+  subcategory String?
+  tags        String[]
+
+  // File URLs in R2
+  dxfUrl       String
+  thumbnailUrl String
+
+  // Dimensions (optional)
+  width Float?
+  depth Float?
+
+  // Metadata
+  isPublic  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+  @@index([category, subcategory])
+  @@index([slug])
+  @@map("cad_blocks")
+  @@schema("app")
+}

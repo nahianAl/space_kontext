@@ -68,6 +68,11 @@ export type SketchfabToken = $Result.DefaultSelection<Prisma.$SketchfabTokenPayl
  * 
  */
 export type SketchfabModel = $Result.DefaultSelection<Prisma.$SketchfabModelPayload>
+/**
+ * Model CadBlock
+ * 
+ */
+export type CadBlock = $Result.DefaultSelection<Prisma.$CadBlockPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -296,6 +301,16 @@ export class PrismaClient<
     * ```
     */
   get sketchfabModel(): Prisma.SketchfabModelDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.cadBlock`: Exposes CRUD operations for the **CadBlock** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more CadBlocks
+    * const cadBlocks = await prisma.cadBlock.findMany()
+    * ```
+    */
+  get cadBlock(): Prisma.CadBlockDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -746,7 +761,8 @@ export namespace Prisma {
     File: 'File',
     GeospatialCache: 'GeospatialCache',
     SketchfabToken: 'SketchfabToken',
-    SketchfabModel: 'SketchfabModel'
+    SketchfabModel: 'SketchfabModel',
+    CadBlock: 'CadBlock'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -765,7 +781,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "userSession" | "project" | "siteAnalysis" | "floorplan" | "model3D" | "massing" | "file" | "geospatialCache" | "sketchfabToken" | "sketchfabModel"
+      modelProps: "user" | "userSession" | "project" | "siteAnalysis" | "floorplan" | "model3D" | "massing" | "file" | "geospatialCache" | "sketchfabToken" | "sketchfabModel" | "cadBlock"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1583,6 +1599,80 @@ export namespace Prisma {
           }
         }
       }
+      CadBlock: {
+        payload: Prisma.$CadBlockPayload<ExtArgs>
+        fields: Prisma.CadBlockFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CadBlockFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadBlockPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CadBlockFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadBlockPayload>
+          }
+          findFirst: {
+            args: Prisma.CadBlockFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadBlockPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CadBlockFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadBlockPayload>
+          }
+          findMany: {
+            args: Prisma.CadBlockFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadBlockPayload>[]
+          }
+          create: {
+            args: Prisma.CadBlockCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadBlockPayload>
+          }
+          createMany: {
+            args: Prisma.CadBlockCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CadBlockCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadBlockPayload>[]
+          }
+          delete: {
+            args: Prisma.CadBlockDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadBlockPayload>
+          }
+          update: {
+            args: Prisma.CadBlockUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadBlockPayload>
+          }
+          deleteMany: {
+            args: Prisma.CadBlockDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CadBlockUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CadBlockUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadBlockPayload>[]
+          }
+          upsert: {
+            args: Prisma.CadBlockUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CadBlockPayload>
+          }
+          aggregate: {
+            args: Prisma.CadBlockAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCadBlock>
+          }
+          groupBy: {
+            args: Prisma.CadBlockGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CadBlockGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CadBlockCountArgs<ExtArgs>
+            result: $Utils.Optional<CadBlockCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1690,6 +1780,7 @@ export namespace Prisma {
     geospatialCache?: GeospatialCacheOmit
     sketchfabToken?: SketchfabTokenOmit
     sketchfabModel?: SketchfabModelOmit
+    cadBlock?: CadBlockOmit
   }
 
   /* Types for Logging */
@@ -14179,6 +14270,1139 @@ export namespace Prisma {
 
 
   /**
+   * Model CadBlock
+   */
+
+  export type AggregateCadBlock = {
+    _count: CadBlockCountAggregateOutputType | null
+    _avg: CadBlockAvgAggregateOutputType | null
+    _sum: CadBlockSumAggregateOutputType | null
+    _min: CadBlockMinAggregateOutputType | null
+    _max: CadBlockMaxAggregateOutputType | null
+  }
+
+  export type CadBlockAvgAggregateOutputType = {
+    width: number | null
+    depth: number | null
+  }
+
+  export type CadBlockSumAggregateOutputType = {
+    width: number | null
+    depth: number | null
+  }
+
+  export type CadBlockMinAggregateOutputType = {
+    id: string | null
+    slug: string | null
+    name: string | null
+    category: string | null
+    subcategory: string | null
+    dxfUrl: string | null
+    thumbnailUrl: string | null
+    width: number | null
+    depth: number | null
+    isPublic: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CadBlockMaxAggregateOutputType = {
+    id: string | null
+    slug: string | null
+    name: string | null
+    category: string | null
+    subcategory: string | null
+    dxfUrl: string | null
+    thumbnailUrl: string | null
+    width: number | null
+    depth: number | null
+    isPublic: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CadBlockCountAggregateOutputType = {
+    id: number
+    slug: number
+    name: number
+    category: number
+    subcategory: number
+    tags: number
+    dxfUrl: number
+    thumbnailUrl: number
+    width: number
+    depth: number
+    isPublic: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CadBlockAvgAggregateInputType = {
+    width?: true
+    depth?: true
+  }
+
+  export type CadBlockSumAggregateInputType = {
+    width?: true
+    depth?: true
+  }
+
+  export type CadBlockMinAggregateInputType = {
+    id?: true
+    slug?: true
+    name?: true
+    category?: true
+    subcategory?: true
+    dxfUrl?: true
+    thumbnailUrl?: true
+    width?: true
+    depth?: true
+    isPublic?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CadBlockMaxAggregateInputType = {
+    id?: true
+    slug?: true
+    name?: true
+    category?: true
+    subcategory?: true
+    dxfUrl?: true
+    thumbnailUrl?: true
+    width?: true
+    depth?: true
+    isPublic?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CadBlockCountAggregateInputType = {
+    id?: true
+    slug?: true
+    name?: true
+    category?: true
+    subcategory?: true
+    tags?: true
+    dxfUrl?: true
+    thumbnailUrl?: true
+    width?: true
+    depth?: true
+    isPublic?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CadBlockAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CadBlock to aggregate.
+     */
+    where?: CadBlockWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CadBlocks to fetch.
+     */
+    orderBy?: CadBlockOrderByWithRelationInput | CadBlockOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CadBlockWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CadBlocks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CadBlocks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned CadBlocks
+    **/
+    _count?: true | CadBlockCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CadBlockAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CadBlockSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CadBlockMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CadBlockMaxAggregateInputType
+  }
+
+  export type GetCadBlockAggregateType<T extends CadBlockAggregateArgs> = {
+        [P in keyof T & keyof AggregateCadBlock]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCadBlock[P]>
+      : GetScalarType<T[P], AggregateCadBlock[P]>
+  }
+
+
+
+
+  export type CadBlockGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CadBlockWhereInput
+    orderBy?: CadBlockOrderByWithAggregationInput | CadBlockOrderByWithAggregationInput[]
+    by: CadBlockScalarFieldEnum[] | CadBlockScalarFieldEnum
+    having?: CadBlockScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CadBlockCountAggregateInputType | true
+    _avg?: CadBlockAvgAggregateInputType
+    _sum?: CadBlockSumAggregateInputType
+    _min?: CadBlockMinAggregateInputType
+    _max?: CadBlockMaxAggregateInputType
+  }
+
+  export type CadBlockGroupByOutputType = {
+    id: string
+    slug: string
+    name: string
+    category: string
+    subcategory: string | null
+    tags: string[]
+    dxfUrl: string
+    thumbnailUrl: string
+    width: number | null
+    depth: number | null
+    isPublic: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: CadBlockCountAggregateOutputType | null
+    _avg: CadBlockAvgAggregateOutputType | null
+    _sum: CadBlockSumAggregateOutputType | null
+    _min: CadBlockMinAggregateOutputType | null
+    _max: CadBlockMaxAggregateOutputType | null
+  }
+
+  type GetCadBlockGroupByPayload<T extends CadBlockGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CadBlockGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CadBlockGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CadBlockGroupByOutputType[P]>
+            : GetScalarType<T[P], CadBlockGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CadBlockSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    slug?: boolean
+    name?: boolean
+    category?: boolean
+    subcategory?: boolean
+    tags?: boolean
+    dxfUrl?: boolean
+    thumbnailUrl?: boolean
+    width?: boolean
+    depth?: boolean
+    isPublic?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["cadBlock"]>
+
+  export type CadBlockSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    slug?: boolean
+    name?: boolean
+    category?: boolean
+    subcategory?: boolean
+    tags?: boolean
+    dxfUrl?: boolean
+    thumbnailUrl?: boolean
+    width?: boolean
+    depth?: boolean
+    isPublic?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["cadBlock"]>
+
+  export type CadBlockSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    slug?: boolean
+    name?: boolean
+    category?: boolean
+    subcategory?: boolean
+    tags?: boolean
+    dxfUrl?: boolean
+    thumbnailUrl?: boolean
+    width?: boolean
+    depth?: boolean
+    isPublic?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["cadBlock"]>
+
+  export type CadBlockSelectScalar = {
+    id?: boolean
+    slug?: boolean
+    name?: boolean
+    category?: boolean
+    subcategory?: boolean
+    tags?: boolean
+    dxfUrl?: boolean
+    thumbnailUrl?: boolean
+    width?: boolean
+    depth?: boolean
+    isPublic?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CadBlockOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "slug" | "name" | "category" | "subcategory" | "tags" | "dxfUrl" | "thumbnailUrl" | "width" | "depth" | "isPublic" | "createdAt" | "updatedAt", ExtArgs["result"]["cadBlock"]>
+
+  export type $CadBlockPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "CadBlock"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      slug: string
+      name: string
+      category: string
+      subcategory: string | null
+      tags: string[]
+      dxfUrl: string
+      thumbnailUrl: string
+      width: number | null
+      depth: number | null
+      isPublic: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["cadBlock"]>
+    composites: {}
+  }
+
+  type CadBlockGetPayload<S extends boolean | null | undefined | CadBlockDefaultArgs> = $Result.GetResult<Prisma.$CadBlockPayload, S>
+
+  type CadBlockCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CadBlockFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CadBlockCountAggregateInputType | true
+    }
+
+  export interface CadBlockDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['CadBlock'], meta: { name: 'CadBlock' } }
+    /**
+     * Find zero or one CadBlock that matches the filter.
+     * @param {CadBlockFindUniqueArgs} args - Arguments to find a CadBlock
+     * @example
+     * // Get one CadBlock
+     * const cadBlock = await prisma.cadBlock.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CadBlockFindUniqueArgs>(args: SelectSubset<T, CadBlockFindUniqueArgs<ExtArgs>>): Prisma__CadBlockClient<$Result.GetResult<Prisma.$CadBlockPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one CadBlock that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CadBlockFindUniqueOrThrowArgs} args - Arguments to find a CadBlock
+     * @example
+     * // Get one CadBlock
+     * const cadBlock = await prisma.cadBlock.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CadBlockFindUniqueOrThrowArgs>(args: SelectSubset<T, CadBlockFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CadBlockClient<$Result.GetResult<Prisma.$CadBlockPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CadBlock that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CadBlockFindFirstArgs} args - Arguments to find a CadBlock
+     * @example
+     * // Get one CadBlock
+     * const cadBlock = await prisma.cadBlock.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CadBlockFindFirstArgs>(args?: SelectSubset<T, CadBlockFindFirstArgs<ExtArgs>>): Prisma__CadBlockClient<$Result.GetResult<Prisma.$CadBlockPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first CadBlock that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CadBlockFindFirstOrThrowArgs} args - Arguments to find a CadBlock
+     * @example
+     * // Get one CadBlock
+     * const cadBlock = await prisma.cadBlock.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CadBlockFindFirstOrThrowArgs>(args?: SelectSubset<T, CadBlockFindFirstOrThrowArgs<ExtArgs>>): Prisma__CadBlockClient<$Result.GetResult<Prisma.$CadBlockPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more CadBlocks that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CadBlockFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all CadBlocks
+     * const cadBlocks = await prisma.cadBlock.findMany()
+     * 
+     * // Get first 10 CadBlocks
+     * const cadBlocks = await prisma.cadBlock.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const cadBlockWithIdOnly = await prisma.cadBlock.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CadBlockFindManyArgs>(args?: SelectSubset<T, CadBlockFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CadBlockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a CadBlock.
+     * @param {CadBlockCreateArgs} args - Arguments to create a CadBlock.
+     * @example
+     * // Create one CadBlock
+     * const CadBlock = await prisma.cadBlock.create({
+     *   data: {
+     *     // ... data to create a CadBlock
+     *   }
+     * })
+     * 
+     */
+    create<T extends CadBlockCreateArgs>(args: SelectSubset<T, CadBlockCreateArgs<ExtArgs>>): Prisma__CadBlockClient<$Result.GetResult<Prisma.$CadBlockPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many CadBlocks.
+     * @param {CadBlockCreateManyArgs} args - Arguments to create many CadBlocks.
+     * @example
+     * // Create many CadBlocks
+     * const cadBlock = await prisma.cadBlock.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CadBlockCreateManyArgs>(args?: SelectSubset<T, CadBlockCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many CadBlocks and returns the data saved in the database.
+     * @param {CadBlockCreateManyAndReturnArgs} args - Arguments to create many CadBlocks.
+     * @example
+     * // Create many CadBlocks
+     * const cadBlock = await prisma.cadBlock.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many CadBlocks and only return the `id`
+     * const cadBlockWithIdOnly = await prisma.cadBlock.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CadBlockCreateManyAndReturnArgs>(args?: SelectSubset<T, CadBlockCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CadBlockPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a CadBlock.
+     * @param {CadBlockDeleteArgs} args - Arguments to delete one CadBlock.
+     * @example
+     * // Delete one CadBlock
+     * const CadBlock = await prisma.cadBlock.delete({
+     *   where: {
+     *     // ... filter to delete one CadBlock
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CadBlockDeleteArgs>(args: SelectSubset<T, CadBlockDeleteArgs<ExtArgs>>): Prisma__CadBlockClient<$Result.GetResult<Prisma.$CadBlockPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one CadBlock.
+     * @param {CadBlockUpdateArgs} args - Arguments to update one CadBlock.
+     * @example
+     * // Update one CadBlock
+     * const cadBlock = await prisma.cadBlock.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CadBlockUpdateArgs>(args: SelectSubset<T, CadBlockUpdateArgs<ExtArgs>>): Prisma__CadBlockClient<$Result.GetResult<Prisma.$CadBlockPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more CadBlocks.
+     * @param {CadBlockDeleteManyArgs} args - Arguments to filter CadBlocks to delete.
+     * @example
+     * // Delete a few CadBlocks
+     * const { count } = await prisma.cadBlock.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CadBlockDeleteManyArgs>(args?: SelectSubset<T, CadBlockDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CadBlocks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CadBlockUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many CadBlocks
+     * const cadBlock = await prisma.cadBlock.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CadBlockUpdateManyArgs>(args: SelectSubset<T, CadBlockUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more CadBlocks and returns the data updated in the database.
+     * @param {CadBlockUpdateManyAndReturnArgs} args - Arguments to update many CadBlocks.
+     * @example
+     * // Update many CadBlocks
+     * const cadBlock = await prisma.cadBlock.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more CadBlocks and only return the `id`
+     * const cadBlockWithIdOnly = await prisma.cadBlock.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CadBlockUpdateManyAndReturnArgs>(args: SelectSubset<T, CadBlockUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CadBlockPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one CadBlock.
+     * @param {CadBlockUpsertArgs} args - Arguments to update or create a CadBlock.
+     * @example
+     * // Update or create a CadBlock
+     * const cadBlock = await prisma.cadBlock.upsert({
+     *   create: {
+     *     // ... data to create a CadBlock
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the CadBlock we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CadBlockUpsertArgs>(args: SelectSubset<T, CadBlockUpsertArgs<ExtArgs>>): Prisma__CadBlockClient<$Result.GetResult<Prisma.$CadBlockPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of CadBlocks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CadBlockCountArgs} args - Arguments to filter CadBlocks to count.
+     * @example
+     * // Count the number of CadBlocks
+     * const count = await prisma.cadBlock.count({
+     *   where: {
+     *     // ... the filter for the CadBlocks we want to count
+     *   }
+     * })
+    **/
+    count<T extends CadBlockCountArgs>(
+      args?: Subset<T, CadBlockCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CadBlockCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a CadBlock.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CadBlockAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CadBlockAggregateArgs>(args: Subset<T, CadBlockAggregateArgs>): Prisma.PrismaPromise<GetCadBlockAggregateType<T>>
+
+    /**
+     * Group by CadBlock.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CadBlockGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CadBlockGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CadBlockGroupByArgs['orderBy'] }
+        : { orderBy?: CadBlockGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CadBlockGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCadBlockGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the CadBlock model
+   */
+  readonly fields: CadBlockFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for CadBlock.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CadBlockClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the CadBlock model
+   */
+  interface CadBlockFieldRefs {
+    readonly id: FieldRef<"CadBlock", 'String'>
+    readonly slug: FieldRef<"CadBlock", 'String'>
+    readonly name: FieldRef<"CadBlock", 'String'>
+    readonly category: FieldRef<"CadBlock", 'String'>
+    readonly subcategory: FieldRef<"CadBlock", 'String'>
+    readonly tags: FieldRef<"CadBlock", 'String[]'>
+    readonly dxfUrl: FieldRef<"CadBlock", 'String'>
+    readonly thumbnailUrl: FieldRef<"CadBlock", 'String'>
+    readonly width: FieldRef<"CadBlock", 'Float'>
+    readonly depth: FieldRef<"CadBlock", 'Float'>
+    readonly isPublic: FieldRef<"CadBlock", 'Boolean'>
+    readonly createdAt: FieldRef<"CadBlock", 'DateTime'>
+    readonly updatedAt: FieldRef<"CadBlock", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * CadBlock findUnique
+   */
+  export type CadBlockFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadBlock
+     */
+    select?: CadBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadBlock
+     */
+    omit?: CadBlockOmit<ExtArgs> | null
+    /**
+     * Filter, which CadBlock to fetch.
+     */
+    where: CadBlockWhereUniqueInput
+  }
+
+  /**
+   * CadBlock findUniqueOrThrow
+   */
+  export type CadBlockFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadBlock
+     */
+    select?: CadBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadBlock
+     */
+    omit?: CadBlockOmit<ExtArgs> | null
+    /**
+     * Filter, which CadBlock to fetch.
+     */
+    where: CadBlockWhereUniqueInput
+  }
+
+  /**
+   * CadBlock findFirst
+   */
+  export type CadBlockFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadBlock
+     */
+    select?: CadBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadBlock
+     */
+    omit?: CadBlockOmit<ExtArgs> | null
+    /**
+     * Filter, which CadBlock to fetch.
+     */
+    where?: CadBlockWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CadBlocks to fetch.
+     */
+    orderBy?: CadBlockOrderByWithRelationInput | CadBlockOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CadBlocks.
+     */
+    cursor?: CadBlockWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CadBlocks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CadBlocks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CadBlocks.
+     */
+    distinct?: CadBlockScalarFieldEnum | CadBlockScalarFieldEnum[]
+  }
+
+  /**
+   * CadBlock findFirstOrThrow
+   */
+  export type CadBlockFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadBlock
+     */
+    select?: CadBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadBlock
+     */
+    omit?: CadBlockOmit<ExtArgs> | null
+    /**
+     * Filter, which CadBlock to fetch.
+     */
+    where?: CadBlockWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CadBlocks to fetch.
+     */
+    orderBy?: CadBlockOrderByWithRelationInput | CadBlockOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for CadBlocks.
+     */
+    cursor?: CadBlockWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CadBlocks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CadBlocks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of CadBlocks.
+     */
+    distinct?: CadBlockScalarFieldEnum | CadBlockScalarFieldEnum[]
+  }
+
+  /**
+   * CadBlock findMany
+   */
+  export type CadBlockFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadBlock
+     */
+    select?: CadBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadBlock
+     */
+    omit?: CadBlockOmit<ExtArgs> | null
+    /**
+     * Filter, which CadBlocks to fetch.
+     */
+    where?: CadBlockWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of CadBlocks to fetch.
+     */
+    orderBy?: CadBlockOrderByWithRelationInput | CadBlockOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing CadBlocks.
+     */
+    cursor?: CadBlockWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` CadBlocks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` CadBlocks.
+     */
+    skip?: number
+    distinct?: CadBlockScalarFieldEnum | CadBlockScalarFieldEnum[]
+  }
+
+  /**
+   * CadBlock create
+   */
+  export type CadBlockCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadBlock
+     */
+    select?: CadBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadBlock
+     */
+    omit?: CadBlockOmit<ExtArgs> | null
+    /**
+     * The data needed to create a CadBlock.
+     */
+    data: XOR<CadBlockCreateInput, CadBlockUncheckedCreateInput>
+  }
+
+  /**
+   * CadBlock createMany
+   */
+  export type CadBlockCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many CadBlocks.
+     */
+    data: CadBlockCreateManyInput | CadBlockCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CadBlock createManyAndReturn
+   */
+  export type CadBlockCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadBlock
+     */
+    select?: CadBlockSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadBlock
+     */
+    omit?: CadBlockOmit<ExtArgs> | null
+    /**
+     * The data used to create many CadBlocks.
+     */
+    data: CadBlockCreateManyInput | CadBlockCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * CadBlock update
+   */
+  export type CadBlockUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadBlock
+     */
+    select?: CadBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadBlock
+     */
+    omit?: CadBlockOmit<ExtArgs> | null
+    /**
+     * The data needed to update a CadBlock.
+     */
+    data: XOR<CadBlockUpdateInput, CadBlockUncheckedUpdateInput>
+    /**
+     * Choose, which CadBlock to update.
+     */
+    where: CadBlockWhereUniqueInput
+  }
+
+  /**
+   * CadBlock updateMany
+   */
+  export type CadBlockUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update CadBlocks.
+     */
+    data: XOR<CadBlockUpdateManyMutationInput, CadBlockUncheckedUpdateManyInput>
+    /**
+     * Filter which CadBlocks to update
+     */
+    where?: CadBlockWhereInput
+    /**
+     * Limit how many CadBlocks to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CadBlock updateManyAndReturn
+   */
+  export type CadBlockUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadBlock
+     */
+    select?: CadBlockSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadBlock
+     */
+    omit?: CadBlockOmit<ExtArgs> | null
+    /**
+     * The data used to update CadBlocks.
+     */
+    data: XOR<CadBlockUpdateManyMutationInput, CadBlockUncheckedUpdateManyInput>
+    /**
+     * Filter which CadBlocks to update
+     */
+    where?: CadBlockWhereInput
+    /**
+     * Limit how many CadBlocks to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * CadBlock upsert
+   */
+  export type CadBlockUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadBlock
+     */
+    select?: CadBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadBlock
+     */
+    omit?: CadBlockOmit<ExtArgs> | null
+    /**
+     * The filter to search for the CadBlock to update in case it exists.
+     */
+    where: CadBlockWhereUniqueInput
+    /**
+     * In case the CadBlock found by the `where` argument doesn't exist, create a new CadBlock with this data.
+     */
+    create: XOR<CadBlockCreateInput, CadBlockUncheckedCreateInput>
+    /**
+     * In case the CadBlock was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CadBlockUpdateInput, CadBlockUncheckedUpdateInput>
+  }
+
+  /**
+   * CadBlock delete
+   */
+  export type CadBlockDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadBlock
+     */
+    select?: CadBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadBlock
+     */
+    omit?: CadBlockOmit<ExtArgs> | null
+    /**
+     * Filter which CadBlock to delete.
+     */
+    where: CadBlockWhereUniqueInput
+  }
+
+  /**
+   * CadBlock deleteMany
+   */
+  export type CadBlockDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which CadBlocks to delete
+     */
+    where?: CadBlockWhereInput
+    /**
+     * Limit how many CadBlocks to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * CadBlock without action
+   */
+  export type CadBlockDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the CadBlock
+     */
+    select?: CadBlockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the CadBlock
+     */
+    omit?: CadBlockOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -14346,6 +15570,25 @@ export namespace Prisma {
   export type SketchfabModelScalarFieldEnum = (typeof SketchfabModelScalarFieldEnum)[keyof typeof SketchfabModelScalarFieldEnum]
 
 
+  export const CadBlockScalarFieldEnum: {
+    id: 'id',
+    slug: 'slug',
+    name: 'name',
+    category: 'category',
+    subcategory: 'subcategory',
+    tags: 'tags',
+    dxfUrl: 'dxfUrl',
+    thumbnailUrl: 'thumbnailUrl',
+    width: 'width',
+    depth: 'depth',
+    isPublic: 'isPublic',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CadBlockScalarFieldEnum = (typeof CadBlockScalarFieldEnum)[keyof typeof CadBlockScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -14466,6 +15709,13 @@ export namespace Prisma {
    * Reference to a field of type 'Float[]'
    */
   export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
   /**
    * Deep Input Types
@@ -15271,6 +16521,100 @@ export namespace Prisma {
     attribution?: JsonWithAggregatesFilter<"SketchfabModel">
     license?: StringWithAggregatesFilter<"SketchfabModel"> | string
     createdAt?: DateTimeWithAggregatesFilter<"SketchfabModel"> | Date | string
+  }
+
+  export type CadBlockWhereInput = {
+    AND?: CadBlockWhereInput | CadBlockWhereInput[]
+    OR?: CadBlockWhereInput[]
+    NOT?: CadBlockWhereInput | CadBlockWhereInput[]
+    id?: StringFilter<"CadBlock"> | string
+    slug?: StringFilter<"CadBlock"> | string
+    name?: StringFilter<"CadBlock"> | string
+    category?: StringFilter<"CadBlock"> | string
+    subcategory?: StringNullableFilter<"CadBlock"> | string | null
+    tags?: StringNullableListFilter<"CadBlock">
+    dxfUrl?: StringFilter<"CadBlock"> | string
+    thumbnailUrl?: StringFilter<"CadBlock"> | string
+    width?: FloatNullableFilter<"CadBlock"> | number | null
+    depth?: FloatNullableFilter<"CadBlock"> | number | null
+    isPublic?: BoolFilter<"CadBlock"> | boolean
+    createdAt?: DateTimeFilter<"CadBlock"> | Date | string
+    updatedAt?: DateTimeFilter<"CadBlock"> | Date | string
+  }
+
+  export type CadBlockOrderByWithRelationInput = {
+    id?: SortOrder
+    slug?: SortOrder
+    name?: SortOrder
+    category?: SortOrder
+    subcategory?: SortOrderInput | SortOrder
+    tags?: SortOrder
+    dxfUrl?: SortOrder
+    thumbnailUrl?: SortOrder
+    width?: SortOrderInput | SortOrder
+    depth?: SortOrderInput | SortOrder
+    isPublic?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CadBlockWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    slug?: string
+    AND?: CadBlockWhereInput | CadBlockWhereInput[]
+    OR?: CadBlockWhereInput[]
+    NOT?: CadBlockWhereInput | CadBlockWhereInput[]
+    name?: StringFilter<"CadBlock"> | string
+    category?: StringFilter<"CadBlock"> | string
+    subcategory?: StringNullableFilter<"CadBlock"> | string | null
+    tags?: StringNullableListFilter<"CadBlock">
+    dxfUrl?: StringFilter<"CadBlock"> | string
+    thumbnailUrl?: StringFilter<"CadBlock"> | string
+    width?: FloatNullableFilter<"CadBlock"> | number | null
+    depth?: FloatNullableFilter<"CadBlock"> | number | null
+    isPublic?: BoolFilter<"CadBlock"> | boolean
+    createdAt?: DateTimeFilter<"CadBlock"> | Date | string
+    updatedAt?: DateTimeFilter<"CadBlock"> | Date | string
+  }, "id" | "slug">
+
+  export type CadBlockOrderByWithAggregationInput = {
+    id?: SortOrder
+    slug?: SortOrder
+    name?: SortOrder
+    category?: SortOrder
+    subcategory?: SortOrderInput | SortOrder
+    tags?: SortOrder
+    dxfUrl?: SortOrder
+    thumbnailUrl?: SortOrder
+    width?: SortOrderInput | SortOrder
+    depth?: SortOrderInput | SortOrder
+    isPublic?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CadBlockCountOrderByAggregateInput
+    _avg?: CadBlockAvgOrderByAggregateInput
+    _max?: CadBlockMaxOrderByAggregateInput
+    _min?: CadBlockMinOrderByAggregateInput
+    _sum?: CadBlockSumOrderByAggregateInput
+  }
+
+  export type CadBlockScalarWhereWithAggregatesInput = {
+    AND?: CadBlockScalarWhereWithAggregatesInput | CadBlockScalarWhereWithAggregatesInput[]
+    OR?: CadBlockScalarWhereWithAggregatesInput[]
+    NOT?: CadBlockScalarWhereWithAggregatesInput | CadBlockScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"CadBlock"> | string
+    slug?: StringWithAggregatesFilter<"CadBlock"> | string
+    name?: StringWithAggregatesFilter<"CadBlock"> | string
+    category?: StringWithAggregatesFilter<"CadBlock"> | string
+    subcategory?: StringNullableWithAggregatesFilter<"CadBlock"> | string | null
+    tags?: StringNullableListFilter<"CadBlock">
+    dxfUrl?: StringWithAggregatesFilter<"CadBlock"> | string
+    thumbnailUrl?: StringWithAggregatesFilter<"CadBlock"> | string
+    width?: FloatNullableWithAggregatesFilter<"CadBlock"> | number | null
+    depth?: FloatNullableWithAggregatesFilter<"CadBlock"> | number | null
+    isPublic?: BoolWithAggregatesFilter<"CadBlock"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"CadBlock"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"CadBlock"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -16150,6 +17494,118 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type CadBlockCreateInput = {
+    id?: string
+    slug: string
+    name: string
+    category: string
+    subcategory?: string | null
+    tags?: CadBlockCreatetagsInput | string[]
+    dxfUrl: string
+    thumbnailUrl: string
+    width?: number | null
+    depth?: number | null
+    isPublic?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CadBlockUncheckedCreateInput = {
+    id?: string
+    slug: string
+    name: string
+    category: string
+    subcategory?: string | null
+    tags?: CadBlockCreatetagsInput | string[]
+    dxfUrl: string
+    thumbnailUrl: string
+    width?: number | null
+    depth?: number | null
+    isPublic?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CadBlockUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: CadBlockUpdatetagsInput | string[]
+    dxfUrl?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: StringFieldUpdateOperationsInput | string
+    width?: NullableFloatFieldUpdateOperationsInput | number | null
+    depth?: NullableFloatFieldUpdateOperationsInput | number | null
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CadBlockUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: CadBlockUpdatetagsInput | string[]
+    dxfUrl?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: StringFieldUpdateOperationsInput | string
+    width?: NullableFloatFieldUpdateOperationsInput | number | null
+    depth?: NullableFloatFieldUpdateOperationsInput | number | null
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CadBlockCreateManyInput = {
+    id?: string
+    slug: string
+    name: string
+    category: string
+    subcategory?: string | null
+    tags?: CadBlockCreatetagsInput | string[]
+    dxfUrl: string
+    thumbnailUrl: string
+    width?: number | null
+    depth?: number | null
+    isPublic?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CadBlockUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: CadBlockUpdatetagsInput | string[]
+    dxfUrl?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: StringFieldUpdateOperationsInput | string
+    width?: NullableFloatFieldUpdateOperationsInput | number | null
+    depth?: NullableFloatFieldUpdateOperationsInput | number | null
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CadBlockUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    subcategory?: NullableStringFieldUpdateOperationsInput | string | null
+    tags?: CadBlockUpdatetagsInput | string[]
+    dxfUrl?: StringFieldUpdateOperationsInput | string
+    thumbnailUrl?: StringFieldUpdateOperationsInput | string
+    width?: NullableFloatFieldUpdateOperationsInput | number | null
+    depth?: NullableFloatFieldUpdateOperationsInput | number | null
+    isPublic?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -16813,6 +18269,110 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type CadBlockCountOrderByAggregateInput = {
+    id?: SortOrder
+    slug?: SortOrder
+    name?: SortOrder
+    category?: SortOrder
+    subcategory?: SortOrder
+    tags?: SortOrder
+    dxfUrl?: SortOrder
+    thumbnailUrl?: SortOrder
+    width?: SortOrder
+    depth?: SortOrder
+    isPublic?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CadBlockAvgOrderByAggregateInput = {
+    width?: SortOrder
+    depth?: SortOrder
+  }
+
+  export type CadBlockMaxOrderByAggregateInput = {
+    id?: SortOrder
+    slug?: SortOrder
+    name?: SortOrder
+    category?: SortOrder
+    subcategory?: SortOrder
+    dxfUrl?: SortOrder
+    thumbnailUrl?: SortOrder
+    width?: SortOrder
+    depth?: SortOrder
+    isPublic?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CadBlockMinOrderByAggregateInput = {
+    id?: SortOrder
+    slug?: SortOrder
+    name?: SortOrder
+    category?: SortOrder
+    subcategory?: SortOrder
+    dxfUrl?: SortOrder
+    thumbnailUrl?: SortOrder
+    width?: SortOrder
+    depth?: SortOrder
+    isPublic?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CadBlockSumOrderByAggregateInput = {
+    width?: SortOrder
+    depth?: SortOrder
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type ProjectCreateNestedManyWithoutUserInput = {
     create?: XOR<ProjectCreateWithoutUserInput, ProjectUncheckedCreateWithoutUserInput> | ProjectCreateWithoutUserInput[] | ProjectUncheckedCreateWithoutUserInput[]
     connectOrCreate?: ProjectCreateOrConnectWithoutUserInput | ProjectCreateOrConnectWithoutUserInput[]
@@ -17387,6 +18947,27 @@ export namespace Prisma {
     update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutSketchfabModelsInput, ProjectUpdateWithoutSketchfabModelsInput>, ProjectUncheckedUpdateWithoutSketchfabModelsInput>
   }
 
+  export type CadBlockCreatetagsInput = {
+    set: string[]
+  }
+
+  export type CadBlockUpdatetagsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -17567,6 +19148,46 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type ProjectCreateWithoutUserInput = {
