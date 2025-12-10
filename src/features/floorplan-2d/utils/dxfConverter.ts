@@ -920,6 +920,84 @@ export async function parseDXFFile(file: File): Promise<DXFData> {
 }
 
 /**
+ * Fetch and parse DXF file from URL
+ */
+export async function parseDXFFromURL(url: string): Promise<DXFData> {
+  // Ensure we're in the browser environment
+  if (typeof window === 'undefined') {
+    return Promise.reject(new Error('DXF parsing is only available in the browser'));
+  }
+
+  try {
+    // Fetch the DXF file
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch DXF file: ${response.statusText}`);
+    }
+
+    const dxfContent = await response.text();
+    if (!dxfContent) {
+      throw new Error('Failed to read DXF file content');
+    }
+
+    // Dynamically import dxf package to avoid SSR issues
+    const dxfModule = await import('dxf');
+    const Helper = (dxfModule as any).Helper || (dxfModule as any).default?.Helper;
+
+    if (!Helper) {
+      throw new Error('Failed to import DXF Helper class');
+    }
+
+    const helper = new Helper(dxfContent);
+    const parsed = helper.parsed;
+    const denormalised = helper.denormalised;
+
+    if (!parsed) {
+      throw new Error('Failed to parse DXF file - file may be invalid or empty');
+    }
+
+    console.log('[DXF Debug] Parsed structure from URL:', {
+      hasEntities: !!parsed.entities,
+      entityCount: parsed.entities?.length || 0,
+      hasBlocks: !!parsed.blocks,
+      blockCount: parsed.blocks?.length || 0,
+      denormalisedKeys: denormalised ? Object.keys(denormalised) : [],
+    });
+
+    const entities = parsed.entities || [];
+    const blocks = parsed.blocks || [];
+
+    let finalEntities = entities;
+    let finalBlocks = blocks;
+
+    if (denormalised) {
+      if (denormalised.entities && Array.isArray(denormalised.entities)) {
+        finalEntities = denormalised.entities;
+      }
+      if (denormalised.blocks && Array.isArray(denormalised.blocks)) {
+        finalBlocks = denormalised.blocks;
+      }
+    }
+
+    console.log('[DXF Debug] Final counts from URL:', {
+      entities: finalEntities.length,
+      blocks: finalBlocks.length,
+      entityTypes: finalEntities.map((e: any) => e.type).filter((v: any, i: number, a: any[]) => a.indexOf(v) === i),
+    });
+
+    const dxfData: DXFData = {
+      entities: finalEntities,
+      blocks: finalBlocks,
+      header: parsed.header,
+    };
+
+    return dxfData;
+  } catch (error) {
+    throw error instanceof Error ? error : new Error('Unknown error parsing DXF file from URL');
+  }
+}
+
+/**
  * Convert DXF data to Konva Groups
  * Main conversion function that processes entities and blocks
  * Automatically scales furniture to fit within 6000mm x 6000mm (6m x 6m)

@@ -1353,7 +1353,7 @@ export const KonvaCanvas: React.FC<KonvaCanvasProps> = ({ width, height, onStage
 
   const handleDXFFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !contextMenuWorldPoint) return;
+    if (!file || !contextMenuWorldPoint) {return;}
 
     // Check if it's a DXF file
     if (!file.name.toLowerCase().endsWith('.dxf') && !file.type.includes('dxf')) {
@@ -1403,9 +1403,89 @@ export const KonvaCanvas: React.FC<KonvaCanvasProps> = ({ width, height, onStage
     e.target.value = '';
   }, [contextMenuWorldPoint, addDXFBlock]);
 
+  // Handle drag over canvas - allow dropping CAD blocks
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+  }, []);
+
+  // Handle dropping CAD blocks onto canvas
+  const handleDrop = useCallback(async (e: React.DragEvent) => {
+    e.preventDefault();
+
+    try {
+      // Parse the dropped data
+      const jsonData = e.dataTransfer.getData('application/json');
+      if (!jsonData) {
+        console.log('No JSON data found in drop event');
+        return;
+      }
+
+      const dropData = JSON.parse(jsonData);
+
+      // Check if it's a CAD block
+      if (dropData.type !== 'cad-block' || !dropData.dxfUrl) {
+        console.log('Not a CAD block or missing DXF URL');
+        return;
+      }
+
+      // Get drop position relative to the container
+      const container = containerRef.current;
+      if (!container) {
+        console.error('Container ref not available');
+        return;
+      }
+
+      // Get mouse position relative to the container element
+      const containerRect = container.getBoundingClientRect();
+      const screenX = e.clientX - containerRect.left;
+      const screenY = e.clientY - containerRect.top;
+
+      // Convert screen coordinates to world coordinates
+      const worldPoint = screenToWorld(screenX, screenY);
+
+      console.log(`[CAD Block Drop] Dropping "${dropData.name}" at world position:`, worldPoint);
+
+      // Dynamically import DXF converter functions
+      const { parseDXFFromURL, convertDXFToKonvaGroups } = await import('../utils/dxfConverter');
+
+      // Fetch and parse the DXF file from URL
+      const dxfData = await parseDXFFromURL(dropData.dxfUrl);
+
+      // Convert DXF data to Konva groups
+      const konvaGroups = convertDXFToKonvaGroups(
+        dxfData,
+        worldPoint,
+        1, // scale
+        0, // rotation
+        true // yFlip - convert DXF Y-up to Canvas Y-down
+      );
+
+      // Add each group as a block instance
+      konvaGroups.forEach((group) => {
+        addDXFBlock({
+          id: group.id,
+          blockName: dropData.name,
+          x: group.x,
+          y: group.y,
+          rotation: group.rotation,
+          scaleX: group.scaleX,
+          scaleY: group.scaleY,
+          konvaGroupData: group,
+        });
+      });
+
+      console.log(`✅ [CAD Block Drop] Successfully placed ${konvaGroups.length} block(s) from "${dropData.name}"`);
+    } catch (error) {
+      console.error('Failed to drop CAD block:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error(`❌ [CAD Block Drop] Error: ${errorMessage}`);
+    }
+  }, [containerRef, screenToWorld, addDXFBlock]);
+
   const handleImageFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !contextMenuWorldPoint) return;
+    if (!file || !contextMenuWorldPoint) {return;}
 
     // Check if it's an image
     if (!file.type.startsWith('image/')) {
@@ -1490,10 +1570,12 @@ export const KonvaCanvas: React.FC<KonvaCanvasProps> = ({ width, height, onStage
   }
 
   return (
-    <div 
+    <div
       ref={containerRef}
-      className="w-full h-full canvas-container" 
-      style={{ 
+      className="w-full h-full canvas-container"
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      style={{
         touchAction: 'none',
         overscrollBehavior: 'none',
         WebkitUserSelect: 'none',
@@ -1514,8 +1596,8 @@ export const KonvaCanvas: React.FC<KonvaCanvasProps> = ({ width, height, onStage
         onMouseLeave={handleMouseLeave}
         onWheel={handleWheel}
         onContextMenu={handleContextMenu}
-        style={{ 
-          cursor: cursorStyle, 
+        style={{
+          cursor: cursorStyle,
           pointerEvents: 'auto'
         }}
         draggable={false}

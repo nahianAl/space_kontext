@@ -115,7 +115,7 @@ export const CadBlocksLibrary: React.FC<CadBlocksLibraryProps> = ({
               title={block.name}
             >
               {/* Thumbnail Image */}
-              <div className="w-full h-20 bg-gray-900 rounded mb-1 flex items-center justify-center overflow-hidden">
+              <div className="w-full h-20 bg-white rounded mb-1 flex items-center justify-center overflow-hidden">
                 <img
                   src={block.thumbnailUrl}
                   alt={block.name}
