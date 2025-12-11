@@ -145,7 +145,7 @@ function transformPoint(
  * For architectural furniture blocks, always return black for consistency
  */
 function getColor(colorIndex?: number): string {
-  // Always return black for furniture blocks
+  // Always return black for furniture blocks (force black regardless of DXF color)
   return '#000000';
 }
 
@@ -299,7 +299,7 @@ function convertDXFEntityToKonvaData(
         type: 'line',
         points: [start[0], start[1], end[0], end[1]],
         stroke: color,
-        strokeWidth: 1,
+        strokeWidth: 2,
       };
     }
 
@@ -338,7 +338,7 @@ function convertDXFEntityToKonvaData(
         y: center[1],
         radius: radius * scale,
         stroke: color,
-        strokeWidth: 1,
+        strokeWidth: 2,
       };
     }
 
@@ -377,7 +377,7 @@ function convertDXFEntityToKonvaData(
         type: 'path',
         data: pathData,
         stroke: color,
-        strokeWidth: 1,
+        strokeWidth: 2,
       };
     }
 
@@ -450,7 +450,7 @@ function convertDXFEntityToKonvaData(
           type: 'line',
           points: flatPoints,
           stroke: color,
-          strokeWidth: 1,
+          strokeWidth: 2,
           closed: entity.closed || false,
         };
       } else {
@@ -464,7 +464,7 @@ function convertDXFEntityToKonvaData(
           type: 'line',
           points: points,
           stroke: color,
-          strokeWidth: 1,
+          strokeWidth: 2,
           closed: entity.closed || false,
         };
       }
@@ -492,7 +492,7 @@ function convertDXFEntityToKonvaData(
           type: 'line',
           points: [p1Transformed[0], p1Transformed[1], p2Transformed[0], p2Transformed[1]],
           stroke: color,
-          strokeWidth: 1,
+          strokeWidth: 2,
         };
       } else if (controlPoints.length === 3) {
         // Quadratic bezier
@@ -510,7 +510,7 @@ function convertDXFEntityToKonvaData(
           type: 'path',
           data: pathData,
           stroke: color,
-          strokeWidth: 1,
+          strokeWidth: 2,
         };
       } else {
         // Multiple control points - create smooth path using cubic bezier
@@ -547,7 +547,7 @@ function convertDXFEntityToKonvaData(
           type: 'path',
           data: pathPoints.join(' '),
           stroke: color,
-          strokeWidth: 1,
+          strokeWidth: 2,
         };
       }
     }
@@ -592,7 +592,7 @@ function convertDXFEntityToKonvaData(
         type: 'path',
         data: pathPoints.join(' '),
         stroke: color,
-        strokeWidth: 1,
+        strokeWidth: 2,
       };
     }
 
@@ -656,7 +656,7 @@ function convertDXFEntityToKonvaData(
           type: 'line',
           points: points,
           stroke: color,
-          strokeWidth: 1,
+          strokeWidth: 2,
           closed: true,
         };
       }
@@ -675,9 +675,9 @@ function convertDXFEntityToKonvaData(
         type: 'circle',
         x: center[0],
         y: center[1],
-        radius: 2 * scale, // Small fixed size
+        radius: 5 * scale, // Small visible size
         stroke: color,
-        strokeWidth: 1,
+        strokeWidth: 2,
         fill: color,
       };
     }
@@ -1201,32 +1201,43 @@ export function convertDXFToKonvaGroups(
       bounds,
     });
 
-    // STEP 2: Calculate auto-scale to fit within 6000mm x 6000mm (6 meters)
+    // STEP 2: Calculate auto-scale to ensure minimum size of 1000mm (1 meter)
     const maxDimension = Math.max(width, height);
-    const maxAllowedSize = 6000; // 6 meters in mm
+    const minRequiredSize = 1000; // Minimum 1 meter
+    const maxAllowedSize = 6000; // Maximum 6 meters
 
-    if (maxDimension > maxAllowedSize) {
+    if (maxDimension < minRequiredSize) {
+      // Scale UP if too small
+      autoScale = minRequiredSize / maxDimension;
+      console.log('[DXF Convert] Scaling UP (too small):', {
+        originalMax: maxDimension.toFixed(2),
+        scaleFactor: autoScale.toFixed(4),
+        newMax: (maxDimension * autoScale).toFixed(2),
+      });
+    } else if (maxDimension > maxAllowedSize) {
+      // Scale DOWN if too large
       autoScale = maxAllowedSize / maxDimension;
-      console.log('[DXF Convert] Auto-scaling:', {
+      console.log('[DXF Convert] Scaling DOWN (too large):', {
         originalMax: maxDimension.toFixed(2),
         scaleFactor: autoScale.toFixed(4),
         newMax: (maxDimension * autoScale).toFixed(2),
       });
     } else {
-      // Even if smaller, we might want to normalize the scale
-      // For now, keep original scale if smaller than max
+      // Keep original scale if within range
       autoScale = scale;
+      console.log('[DXF Convert] No scaling needed, size is good:', {
+        dimension: maxDimension.toFixed(2),
+      });
     }
 
     // STEP 3: Calculate center of bounds in DXF coordinates
     const centerX = (bounds.minX + bounds.maxX) / 2;
     const centerY = (bounds.minY + bounds.maxY) / 2;
 
-    // Apply Y-flip to center if needed
+    // STEP 4: Calculate offset to center the DXF at insertion point
+    // Apply Y-flip to centerY if needed before calculating offset
     const flippedCenterY = yFlip ? flipY(centerY) : centerY;
 
-    // STEP 4: Calculate offset to center the DXF at insertion point
-    // We need to subtract the scaled center from the insertion point
     centerOffset = [
       -(centerX * autoScale),
       -(flippedCenterY * autoScale)
@@ -1234,22 +1245,27 @@ export function convertDXFToKonvaGroups(
 
     console.log('[DXF Convert] Centering:', {
       dxfCenter: { x: centerX.toFixed(2), y: centerY.toFixed(2) },
+      flippedCenterY: flippedCenterY.toFixed(2),
+      autoScale: autoScale.toFixed(4),
       centerOffset: centerOffset.map(v => v.toFixed(2)),
-      finalInsertionPoint: [
-        (insertionPoint[0] + centerOffset[0]).toFixed(2),
-        (insertionPoint[1] + centerOffset[1]).toFixed(2)
-      ],
+      insertionPoint: insertionPoint.map(v => v.toFixed(2)),
     });
   }
 
   // Apply the auto-scale to the scale parameter
   const finalScale = autoScale;
 
-  // Adjust insertion point to center the content
+  // Adjust insertion point to center the content at the drop location
   const adjustedInsertionPoint: Point = [
     insertionPoint[0] + centerOffset[0],
     insertionPoint[1] + centerOffset[1]
   ];
+
+  console.log('[DXF Convert] Final insertion point:', {
+    original: insertionPoint.map(v => v.toFixed(2)),
+    adjusted: adjustedInsertionPoint.map(v => v.toFixed(2)),
+    offset: centerOffset.map(v => v.toFixed(2)),
+  });
 
   // First, process block definitions
   const blockMap = processDXFBlocks(dxfData, yFlip);

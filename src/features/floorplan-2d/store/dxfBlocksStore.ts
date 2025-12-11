@@ -38,6 +38,14 @@ export const useDXFBlocksStore = create<DXFBlocksStore>((set, get) => ({
   selectedBlockIds: [],
 
   addBlock: (block) => {
+    console.log('[DXF Store] Adding block:', {
+      id: block.id,
+      name: block.blockName,
+      position: { x: block.x, y: block.y },
+      scale: { x: block.scaleX, y: block.scaleY },
+      rotation: block.rotation,
+      shapeCount: block.konvaGroupData.shapes.length,
+    });
     set((state) => ({
       blocks: [...state.blocks, block],
     }));
