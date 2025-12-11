@@ -41,6 +41,7 @@ interface DXFEntity {
   endParameter?: number;
   // INSERT (block reference)
   name?: string;
+  block?: string; // Block name (used by dxf parser instead of 'name')
   position?: { x: number; y: number; z?: number };
   rotation?: number; // in degrees
   xScale?: number;
@@ -1258,26 +1259,26 @@ export function convertDXFToKonvaGroups(
   let insertCount = 0;
   if (dxfData.entities) {
     for (const entity of dxfData.entities) {
-      if (entity.type === 'INSERT') {
-        console.log('[DXF Convert] Found INSERT entity:', {
-          type: entity.type,
-          name: entity.name,
-          handle: entity.handle,
-          allKeys: Object.keys(entity),
-        });
-      }
-      if (entity.type === 'INSERT' && entity.name) {
+      // INSERT entities use 'block' property instead of 'name'
+      const blockName = (entity as any).block || entity.name;
+
+      if (entity.type === 'INSERT' && blockName) {
         insertCount++;
-        const blockDefinition = blockMap.get(entity.name);
+        const blockDefinition = blockMap.get(blockName);
         if (blockDefinition) {
           // Create a new instance of the block
-          const insertPoint: Point = entity.position
-            ? transformPoint(entity.position, adjustedInsertionPoint, 1, 0, yFlip)
-            : adjustedInsertionPoint;
+          // INSERT entities have x, y, z properties directly
+          const position = {
+            x: (entity as any).x ?? 0,
+            y: (entity as any).y ?? 0,
+            z: (entity as any).z,
+          };
+
+          const insertPoint: Point = transformPoint(position, adjustedInsertionPoint, 1, 0, yFlip);
 
           const instance: KonvaGroupData = {
             id: generateId('dxf-block'),
-            name: entity.name,
+            name: blockName,
             shapes: blockDefinition.shapes.map((shape) => ({ ...shape })), // Clone shapes
             x: insertPoint[0],
             y: insertPoint[1],
@@ -1292,9 +1293,9 @@ export function convertDXFToKonvaGroups(
           instance.rotation += rotationDeg;
 
           groups.push(instance);
-          console.log('[DXF Convert] Created block instance:', entity.name, 'with', blockDefinition.shapes.length, 'shapes');
+          console.log('[DXF Convert] Created block instance:', blockName, 'with', blockDefinition.shapes.length, 'shapes');
         } else {
-          console.warn(`[DXF Convert] Block definition not found: ${entity.name}`);
+          console.warn(`[DXF Convert] Block definition not found: ${blockName}`);
         }
       }
     }
