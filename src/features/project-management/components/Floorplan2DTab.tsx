@@ -29,7 +29,7 @@ export default function Floorplan2DTab({ projectId }: { projectId: string }) {
     };
     
     const resizeObserver = new ResizeObserver(updateSize);
-    let container = canvasContainerRef.current;
+    const container = canvasContainerRef.current;
     if (container) {
       resizeObserver.observe(container);
     }

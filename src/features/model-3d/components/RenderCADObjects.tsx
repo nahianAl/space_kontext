@@ -111,7 +111,7 @@ export const RenderCADObjects = ({}: RenderCADObjectsProps) => {
       event.nativeEvent.stopPropagation();
 
       const faceIndex = event.faceIndex;
-      if (faceIndex == null) {
+      if (faceIndex === null || faceIndex === undefined) {
         console.log('[push-pull] Early return: faceIndex is null');
         return;
       }
@@ -174,7 +174,7 @@ export const RenderCADObjects = ({}: RenderCADObjectsProps) => {
 
       // Single-click: Face selection (similar to walls)
       const faceIndex = event.faceIndex;
-      if (faceIndex != null && event.object instanceof THREE.Mesh) {
+      if (faceIndex !== null && faceIndex !== undefined && event.object instanceof THREE.Mesh) {
         // Build face data to get all triangles that make up this face
         const faceData = buildFaceData(event.object, faceIndex, event.point);
         // Use the first triangle index as the representative faceIndex for this face
@@ -260,7 +260,7 @@ export const RenderCADObjects = ({}: RenderCADObjectsProps) => {
       // Only show push-pull preview if tool is active
       if (activeTool === 'push-pull' && !dragInfoRef.current && !pushPullState.active) {
         const faceIndex = event.faceIndex;
-        if (faceIndex != null && event.object instanceof THREE.Mesh) {
+        if (faceIndex !== null && faceIndex !== undefined && event.object instanceof THREE.Mesh) {
           const faceData = buildFaceData(event.object, faceIndex, event.point);
           setPushPullFace(faceData);
         }
@@ -291,7 +291,7 @@ export const RenderCADObjects = ({}: RenderCADObjectsProps) => {
 
       // Hover preview only (not dragging and not active)
       const faceIndex = event.faceIndex;
-      if (faceIndex == null) {
+      if (faceIndex === null || faceIndex === undefined) {
         return;
       }
 
@@ -596,7 +596,7 @@ export const RenderCADObjects = ({}: RenderCADObjectsProps) => {
             {/* Face-level highlighting for selected faces */}
             {selectedFacesForThisObject.map((faceSelection) => {
               const faceGeometry = createFaceGeometry(obj.mesh, faceSelection.faceIndex);
-              if (!faceGeometry) return null;
+              if (!faceGeometry) {return null;}
 
               return (
                 <group key={`face-${obj.id}-${faceSelection.faceIndex}`}>

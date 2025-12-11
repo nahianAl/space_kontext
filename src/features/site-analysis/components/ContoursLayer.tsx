@@ -35,7 +35,7 @@ export function ContoursLayer({
     }
 
     const renderLayer = async () => {
-      if (!map || !map.getContainer()) return;
+      if (!map || !map.getContainer()) {return;}
 
       const L = await import('leaflet');
 
@@ -51,12 +51,12 @@ export function ContoursLayer({
         layerGroup.clearLayers();
       }
 
-      if (!contours.features || contours.features.length === 0) return;
+      if (!contours.features || contours.features.length === 0) {return;}
 
       try {
         // Manually iterate features to avoid L.geoJSON complexities
         contours.features.forEach((feature) => {
-          if (!feature.geometry) return;
+          if (!feature.geometry) {return;}
 
           // const elevation = feature.properties?.elevation; // Unused when tooltips disabled
           

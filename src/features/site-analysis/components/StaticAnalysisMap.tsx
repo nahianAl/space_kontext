@@ -117,8 +117,8 @@ export function StaticAnalysisMap({
 
   // Initialize Map
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    if (!mapRef.current || !capturedImage || !capturedBounds) return;
+    if (typeof window === 'undefined') {return;}
+    if (!mapRef.current || !capturedImage || !capturedBounds) {return;}
 
     const initMap = async () => {
       const L = await import('leaflet');
@@ -185,7 +185,7 @@ export function StaticAnalysisMap({
 
   // Toggle image overlay visibility based on layerVisibility.osm
   useEffect(() => {
-    if (!imageOverlayRef.current || !mapInstanceRef.current) return;
+    if (!imageOverlayRef.current || !mapInstanceRef.current) {return;}
 
     if (layerVisibility.osm) {
       // Show the image overlay
@@ -200,7 +200,7 @@ export function StaticAnalysisMap({
     }
   }, [layerVisibility.osm]);
 
-  if (!capturedImage) return null;
+  if (!capturedImage) {return null;}
 
   // Create bounds expression for SunPathLayer
   const boundsExpression: L.LatLngBoundsExpression | null = capturedBounds 

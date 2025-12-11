@@ -139,11 +139,11 @@ export function detectWallEdgeIntersection(
   tolerance: number = SPLIT_SNAP_TOLERANCE
 ): WallIntersection | null {
   const wall = graph.edges[wallId];
-  if (!wall) return null;
+  if (!wall) {return null;}
 
   const startNode = graph.nodes[wall.startNodeId];
   const endNode = graph.nodes[wall.endNodeId];
-  if (!startNode || !endNode) return null;
+  if (!startNode || !endNode) {return null;}
 
   const wallStart = startNode.position;
   const wallEnd = endNode.position;
@@ -193,7 +193,7 @@ export function findIntersectingWalls(
   const intersections: WallIntersection[] = [];
 
   Object.keys(graph.edges).forEach(wallId => {
-    if (excludeWallIds.includes(wallId)) return;
+    if (excludeWallIds.includes(wallId)) {return;}
 
     const intersection = detectWallEdgeIntersection(point, wallId, graph, tolerance);
     if (intersection && !intersection.isNearEndpoint) {
@@ -234,7 +234,7 @@ function updateOpening2DPosition(
   graph: WallGraph
 ): Opening {
   const startNode = graph.nodes[wall.startNodeId];
-  if (!startNode) return opening;
+  if (!startNode) {return opening;}
 
   const directionX = Math.cos(wall.angle);
   const directionY = Math.sin(wall.angle);
@@ -336,11 +336,11 @@ export function splitWallAtPoint(
   generateWallId: () => string
 ): SplitWallResult | null {
   const wall = graph.edges[wallId];
-  if (!wall) return null;
+  if (!wall) {return null;}
 
   const startNode = graph.nodes[wall.startNodeId];
   const endNode = graph.nodes[wall.endNodeId];
-  if (!startNode || !endNode) return null;
+  if (!startNode || !endNode) {return null;}
 
   const wallStart = startNode.position;
   const wallEnd = endNode.position;

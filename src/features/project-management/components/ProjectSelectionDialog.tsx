@@ -43,7 +43,7 @@ export function ProjectSelectionDialog({
   };
 
   const handleCreateProject = async () => {
-    if (!newProjectName.trim()) return;
+    if (!newProjectName.trim()) {return;}
 
     try {
       setIsCreating(true);
@@ -74,7 +74,7 @@ export function ProjectSelectionDialog({
                 value={newProjectName}
                 onChange={(e) => setNewProjectName(e.target.value)}
                 onKeyPress={(e) => {
-                  if (e.key === 'Enter') handleCreateProject();
+                  if (e.key === 'Enter') {handleCreateProject();}
                 }}
               />
               <Button

@@ -200,12 +200,12 @@ export function snapToWall(
 
   for (const edgeId in graph.edges) {
     const edge = graph.edges[edgeId];
-    if (!edge || !edge.startNodeId || !edge.endNodeId) continue; // Safety check
+    if (!edge || !edge.startNodeId || !edge.endNodeId) {continue;} // Safety check
     
     const startNode = graph.nodes[edge.startNodeId];
     const endNode = graph.nodes[edge.endNodeId];
     
-    if (!startNode || !endNode) continue; // Safety check
+    if (!startNode || !endNode) {continue;} // Safety check
 
     if (startNode && endNode) {
       // Find the closest point on the wall centerline
@@ -243,7 +243,7 @@ export function snapToNode(
 
   for (const nodeId in graph.nodes) {
     const node = graph.nodes[nodeId];
-    if (!node || !node.position) continue; // Safety check
+    if (!node || !node.position) {continue;} // Safety check
     
     const dist = distance(point, node.position);
     

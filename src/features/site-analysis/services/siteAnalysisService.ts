@@ -21,15 +21,15 @@ export class SiteAnalysisService {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
-    if (!response.ok) throw new Error('Failed to save site analysis');
+    if (!response.ok) {throw new Error('Failed to save site analysis');}
     const result = await response.json();
     return result.siteAnalysis;
   }
 
   static async load(projectId: string): Promise<SiteAnalysisData | null> {
     const response = await fetch(`/api/site-analysis/${projectId}`);
-    if (response.status === 404) return null;
-    if (!response.ok) throw new Error('Failed to load site analysis');
+    if (response.status === 404) {return null;}
+    if (!response.ok) {throw new Error('Failed to load site analysis');}
     const data = await response.json();
     return data.siteAnalysis;
   }

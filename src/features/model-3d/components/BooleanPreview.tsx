@@ -230,7 +230,7 @@ export const BooleanPreview = ({
       {hoveredRegion && (() => {
         const hoveredRegionData = regions.find((r) => r.type === hoveredRegion);
         const position = hoveredRegionData?.bounds.getCenter(new THREE.Vector3());
-        if (!position) return null;
+        if (!position) {return null;}
         return (
           <Html
             position={position}

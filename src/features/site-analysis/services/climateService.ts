@@ -268,14 +268,14 @@ function processClimateData(data: ClimateApiResponse): ClimateData {
   // Calculate averages
   const calculateAverage = (values: number[]): number => {
     const validValues = values.filter((v) => v !== null && !isNaN(v) && isFinite(v));
-    if (validValues.length === 0) return 0;
+    if (validValues.length === 0) {return 0;}
     return validValues.reduce((sum, v) => sum + v, 0) / validValues.length;
   };
 
   // Calculate prevailing wind direction (most common direction)
   const calculatePrevailingWind = (directions: number[]): number => {
     const validDirections = directions.filter((d) => d !== null && !isNaN(d) && isFinite(d));
-    if (validDirections.length === 0) return 0;
+    if (validDirections.length === 0) {return 0;}
 
     // Group directions into 8 compass points
     const compassPoints: { [key: number]: number } = {};

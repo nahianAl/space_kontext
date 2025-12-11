@@ -34,7 +34,7 @@ const PlacedModel = ({ model }: PlacedSketchfabModelProps) => {
 
         const mesh = await loadGLBModel(model.fileUrl);
 
-        if (!mounted) return;
+        if (!mounted) {return;}
 
         // Place model on ground
         placeModelOnGround(mesh);
@@ -50,7 +50,7 @@ const PlacedModel = ({ model }: PlacedSketchfabModelProps) => {
         setLoadedMesh(mesh);
         setLoading(false);
       } catch (err) {
-        if (!mounted) return;
+        if (!mounted) {return;}
         console.error('Failed to load Sketchfab model:', err);
         setError(err instanceof Error ? err.message : 'Failed to load model');
         setLoading(false);

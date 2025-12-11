@@ -49,7 +49,7 @@ export default function SiteAnalysisTab({ projectId }: { projectId: string }) {
 
   // Fetch analysis data when captured bounds change (Static Analysis Mode)
   useEffect(() => {
-    if (!capturedBounds) return;
+    if (!capturedBounds) {return;}
 
     const fetchAnalysisData = async () => {
       // Convert Leaflet bounds [[S, W], [N, E]] to [S, W, N, E]
@@ -150,7 +150,7 @@ export default function SiteAnalysisTab({ projectId }: { projectId: string }) {
   
   // Handle search
   const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
+    if (!searchQuery.trim()) {return;}
     
     setIsSearching(true);
     try {

@@ -13,7 +13,7 @@ import { pixelToMeters } from './geometryConverter';
  * Returns points in counter-clockwise order
  */
 function convexHull(points: [number, number][]): [number, number][] {
-  if (points.length < 3) return points;
+  if (points.length < 3) {return points;}
 
   // Find the point with lowest y-coordinate (and leftmost if tied)
   let start = 0;
@@ -75,7 +75,7 @@ function convexHull(points: [number, number][]): [number, number][] {
  * Moves each point away from the centroid
  */
 function offsetPolygon(points: [number, number][], offset: number): [number, number][] {
-  if (points.length < 3) return points;
+  if (points.length < 3) {return points;}
 
   // Calculate centroid
   const centroid: [number, number] = [

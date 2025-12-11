@@ -90,8 +90,8 @@ export class ElevationService extends GeoDataService {
       if (lng === undefined) {
         throw new Error(`Missing longitude at index ${index}`);
       }
-      if (ele < min) min = ele;
-      if (ele > max) max = ele;
+      if (ele < min) {min = ele;}
+      if (ele > max) {max = ele;}
       return {
         lat,
         lng,

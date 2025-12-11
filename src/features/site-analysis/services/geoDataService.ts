@@ -175,7 +175,7 @@ export class GeoDataService {
    */
   private static getFromCache(key: string): unknown | null {
     const cached = this.cache[key];
-    if (!cached) return null;
+    if (!cached) {return null;}
 
     const now = Date.now();
     if (now - cached.timestamp > cached.ttl) {

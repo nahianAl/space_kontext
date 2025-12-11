@@ -242,7 +242,7 @@ export const BooleanTool = () => {
           resultMesh = firstMesh;
           for (let i = 1; i < selectedRegionMeshes.length; i++) {
             const nextMesh = selectedRegionMeshes[i];
-            if (!nextMesh || !resultMesh) continue;
+            if (!nextMesh || !resultMesh) {continue;}
             resultMesh = performBoolean(resultMesh, nextMesh, 'union');
           }
         }

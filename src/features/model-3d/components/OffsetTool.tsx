@@ -250,7 +250,7 @@ export const OffsetTool = () => {
   // Update mouse position
   const handlePointerMove = useCallback(
     (event: PointerEvent) => {
-      if (!gl.domElement) return;
+      if (!gl.domElement) {return;}
 
       const rect = gl.domElement.getBoundingClientRect();
       mouseRef.current.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
@@ -267,7 +267,7 @@ export const OffsetTool = () => {
           // Calculate perpendicular distance from base point
           // Use the distance along the plane, not 3D distance
           const faceCenter = offsetState.selectedFace?.worldCenter;
-          if (!faceCenter) return;
+          if (!faceCenter) {return;}
 
           const delta = intersectPoint.clone().sub(faceCenter);
           const distance = delta.length();
@@ -288,7 +288,7 @@ export const OffsetTool = () => {
   // Handle clicks
   const handlePointerDown = useCallback(
     (event: PointerEvent) => {
-      if (activeTool !== 'offset' || event.button !== 0) return;
+      if (activeTool !== 'offset' || event.button !== 0) {return;}
 
       event.preventDefault();
       event.stopPropagation();
@@ -409,7 +409,7 @@ export const OffsetTool = () => {
 
   // Add event listeners
   useEffect(() => {
-    if (activeTool !== 'offset') return;
+    if (activeTool !== 'offset') {return;}
 
     const canvas = gl.domElement;
     canvas.addEventListener('pointermove', handlePointerMove);
@@ -423,15 +423,15 @@ export const OffsetTool = () => {
 
   // Create preview edges for offset shape
   const previewEdges = useMemo(() => {
-    if (!offsetState.active || !offsetState.selectedFace) return null;
+    if (!offsetState.active || !offsetState.selectedFace) {return null;}
 
     const face = offsetState.selectedFace;
-    if (!face.mesh || !face.vertices || face.vertices.length < 3) return null;
+    if (!face.mesh || !face.vertices || face.vertices.length < 3) {return null;}
 
     // Get the actual face dimensions by examining face vertices
     const faceGeometry = face.mesh.geometry;
     const positionAttr = faceGeometry.getAttribute('position') as THREE.BufferAttribute;
-    if (!positionAttr) return null;
+    if (!positionAttr) {return null;}
 
     // Get face vertices in world space
     const worldVertices: THREE.Vector3[] = [];
@@ -490,7 +490,7 @@ export const OffsetTool = () => {
     const newHeight = offsetState.distance < 0 ? faceHeight - 2 * absDistance : faceHeight + 2 * absDistance;
 
     // Only show preview if dimensions are valid
-    if (newWidth <= 0.001 || newHeight <= 0.001) return null;
+    if (newWidth <= 0.001 || newHeight <= 0.001) {return null;}
 
     // Create edges geometry for the rectangle outline
     const halfWidth = newWidth / 2;
@@ -538,7 +538,7 @@ export const OffsetTool = () => {
 
   // Update preview lines
   useEffect(() => {
-    if (!previewLinesRef.current || !previewEdges) return;
+    if (!previewLinesRef.current || !previewEdges) {return;}
 
     // Update geometry
     const oldGeometry = previewLinesRef.current.geometry;
@@ -552,7 +552,7 @@ export const OffsetTool = () => {
 
   // Label position
   const labelPosition = useMemo(() => {
-    if (!offsetState.active || !offsetState.selectedFace) return null;
+    if (!offsetState.active || !offsetState.selectedFace) {return null;}
 
     const offsetNormal = offsetState.selectedFace.worldNormal.clone().normalize();
     const offsetDistance = 0.6 + Math.abs(offsetState.distance);
@@ -563,13 +563,13 @@ export const OffsetTool = () => {
   }, [offsetState]);
 
   const formattedDistance = useMemo(() => {
-    if (!offsetState.active) return '';
+    if (!offsetState.active) {return '';}
     const distance = offsetState.distance;
     const sign = distance >= 0 ? 'Outward' : 'Inward';
     return `${sign} ${Math.abs(distance).toFixed(3)} m`;
   }, [offsetState]);
 
-  if (activeTool !== 'offset') return null;
+  if (activeTool !== 'offset') {return null;}
 
   return (
     <group>

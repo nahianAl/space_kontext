@@ -319,7 +319,7 @@ function createMiteredSegmentMaker(segmentEdges: WallEdge[], graph?: WallGraph):
   console.log(`[MITER] Processing segment with ${segmentEdges.length} edges, graph=${!!graph}`);
 
   for (const currentEdge of segmentEdges) {
-    if (!currentEdge) continue;
+    if (!currentEdge) {continue;}
 
     const current = currentEdge.centerline;
     // Convert thickness from meters to pixels for rendering
@@ -454,7 +454,7 @@ function findConnectedWallSegments(walls: WallCenterline[]): WallCenterline[][] 
       foundConnection = false;
 
       for (let j = 0; j < walls.length; j++) {
-        if (used.has(j)) continue;
+        if (used.has(j)) {continue;}
 
         const currentWall = segment[segment.length - 1];
         const candidateWall = walls[j];

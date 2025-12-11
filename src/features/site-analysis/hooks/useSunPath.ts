@@ -47,8 +47,8 @@ export function useSunPath(options: UseSunPathOptions): UseSunPathReturn {
       setIsLoading(true);
       setError(null);
       const options: SunPathOptions = {};
-      if (interval !== undefined) options.interval = interval;
-      if (includeNight !== undefined) options.includeNight = includeNight;
+      if (interval !== undefined) {options.interval = interval;}
+      if (includeNight !== undefined) {options.includeNight = includeNight;}
       return generateSunPath(latitude, longitude, {
         date,
         ...options,
@@ -66,8 +66,8 @@ export function useSunPath(options: UseSunPathOptions): UseSunPathReturn {
   const seasonalPaths = useMemo(() => {
     try {
       const options: Omit<SunPathOptions, 'date'> = {};
-      if (interval !== undefined) options.interval = interval;
-      if (includeNight !== undefined) options.includeNight = includeNight;
+      if (interval !== undefined) {options.interval = interval;}
+      if (includeNight !== undefined) {options.includeNight = includeNight;}
       return generateSeasonalSunPaths(latitude, longitude, date.getFullYear(), options);
     } catch (err) {
       console.error('Failed to calculate seasonal sun paths:', err);

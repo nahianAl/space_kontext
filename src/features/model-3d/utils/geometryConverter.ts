@@ -546,7 +546,7 @@ async function createSimpleOpeningCutout(
         : 1.5);
     }
     
-    if (openingHeightM <= 0) return null;
+    if (openingHeightM <= 0) {return null;}
     
     // Calculate from scratch
     const startPoint = new THREE.Vector2(
@@ -574,7 +574,7 @@ async function createSimpleOpeningCutout(
     ];
   }
   
-  if (openingHeightM <= 0) return null;
+  if (openingHeightM <= 0) {return null;}
   
   // Create cutout box with exact same dimensions as the opening model
   // Width and height match the scaled model, depth is thicker for clean cutouts
@@ -624,7 +624,7 @@ export async function generateWallMeshes(
   Object.values(graph.edges).forEach((wall: WallEdge) => {
     const startNode = graph.nodes[wall.startNodeId];
     const endNode = graph.nodes[wall.endNodeId];
-    if (!startNode || !endNode) return;
+    if (!startNode || !endNode) {return;}
     
     // wall.length and wall.thickness are already in METERS (not pixels!)
     const wallLengthM = wall.length;

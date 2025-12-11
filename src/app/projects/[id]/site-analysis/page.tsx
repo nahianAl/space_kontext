@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
+import { FeatureLayout } from '@/shared/components/layout/FeatureLayout';
 
 const SiteAnalysisTab = dynamic(
   () => import('@/features/project-management/components/SiteAnalysisTab'),
@@ -17,9 +18,11 @@ export default function SiteAnalysisPage() {
   }
 
   return (
-    <div className="h-screen w-full">
-      <SiteAnalysisTab projectId={projectId} />
-    </div>
+    <FeatureLayout featureType="site-analysis">
+      <div className="h-screen w-full">
+        <SiteAnalysisTab projectId={projectId} />
+      </div>
+    </FeatureLayout>
   );
 }
 

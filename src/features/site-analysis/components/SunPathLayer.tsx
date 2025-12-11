@@ -34,13 +34,13 @@ export function SunPathLayer({
 
   // Effect to initialize and manage the layer group
   useEffect(() => {
-    if (!map) return;
+    if (!map) {return;}
 
     // Initialize layer group if it doesn't exist
     let layerGroup = layerGroupRef.current;
     if (!layerGroup) {
       import('leaflet').then((L) => {
-        if (!map || !map.getContainer()) return;
+        if (!map || !map.getContainer()) {return;}
         try {
           layerGroup = L.layerGroup().addTo(map);
           layerGroupRef.current = layerGroup;
@@ -184,7 +184,7 @@ export function SunPathLayer({
           const pathData = getSunPath(center.lat, center.lng, { date });
           const positions = pathData.positions.filter((pos) => pos.altitude >= 0);
 
-          if (positions.length === 0) return;
+          if (positions.length === 0) {return;}
 
           const latlngs: [number, number][] = [];
 
@@ -216,7 +216,7 @@ export function SunPathLayer({
             }
           }
 
-          if (latlngs.length < 2) return;
+          if (latlngs.length < 2) {return;}
 
           // Draw the path - validate all coordinates before creating polyline
           const validLatlngs = latlngs
@@ -233,7 +233,7 @@ export function SunPathLayer({
             })
             .filter((ll): ll is L.LatLng => ll !== null);
 
-          if (validLatlngs.length < 2) return;
+          if (validLatlngs.length < 2) {return;}
 
           const polyline = L.polyline(validLatlngs, {
             color: '#FF8C00', // Uniform orange color

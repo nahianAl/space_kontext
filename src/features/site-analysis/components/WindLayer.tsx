@@ -37,7 +37,7 @@ export function WindLayer({
     }
 
     const renderLayer = async () => {
-      if (!map || !map.getContainer()) return;
+      if (!map || !map.getContainer()) {return;}
 
       const L = await import('leaflet');
 
@@ -202,7 +202,7 @@ export function WindLayer({
             const normalY = dx / edgeLength;
             
             // Offset position outward from the boundary
-            let offsetPosition = {
+            const offsetPosition = {
               lat: position.lat + normalY * offsetDistance,
               lng: position.lng + normalX * offsetDistance,
             };
@@ -280,10 +280,10 @@ export function WindLayer({
 
         // Color based on wind speed (brighter, more vibrant colors)
         const getWindColor = (speed: number): string => {
-          if (speed < 10) return '#0066FF'; // Bright blue - calm
-          if (speed < 20) return '#00CC00'; // Bright green - light breeze
-          if (speed < 30) return '#FFCC00'; // Bright yellow - moderate
-          if (speed < 40) return '#FF6600'; // Bright orange - strong
+          if (speed < 10) {return '#0066FF';} // Bright blue - calm
+          if (speed < 20) {return '#00CC00';} // Bright green - light breeze
+          if (speed < 30) {return '#FFCC00';} // Bright yellow - moderate
+          if (speed < 40) {return '#FF6600';} // Bright orange - strong
           return '#FF0000'; // Bright red - very strong
         };
 

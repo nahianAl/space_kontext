@@ -35,7 +35,7 @@ export function BuildingsLayer({
     }
 
     const renderLayer = async () => {
-      if (!map || !map.getContainer()) return;
+      if (!map || !map.getContainer()) {return;}
 
       const L = await import('leaflet');
 
@@ -51,7 +51,7 @@ export function BuildingsLayer({
         layerGroup.clearLayers();
       }
 
-      if (!buildings.features || buildings.features.length === 0) return;
+      if (!buildings.features || buildings.features.length === 0) {return;}
 
       try {
         // Use L.geoJSON for buildings as it handles polygons/multipolygons well
@@ -68,9 +68,9 @@ export function BuildingsLayer({
             if (feature.properties) {
               const props = feature.properties;
               let content = '<div><strong>Building</strong></div>';
-              if (props.name) content += `<div>Name: ${props.name}</div>`;
-              if (props['addr:street']) content += `<div>Address: ${props['addr:housenumber'] || ''} ${props['addr:street']}</div>`;
-              if (props.levels) content += `<div>Levels: ${props.levels}</div>`;
+              if (props.name) {content += `<div>Name: ${props.name}</div>`;}
+              if (props['addr:street']) {content += `<div>Address: ${props['addr:housenumber'] || ''} ${props['addr:street']}</div>`;}
+              if (props.levels) {content += `<div>Levels: ${props.levels}</div>`;}
               
               layer.bindPopup(content);
             }

@@ -24,7 +24,7 @@ export const ModelPreviewModal = ({ model, onClose }: ModelPreviewModalProps) =>
     }
   }, [model]);
 
-  if (!model) return null;
+  if (!model) {return null;}
 
   const embedUrl = `https://sketchfab.com/models/${model.uid}/embed?autostart=1&ui_controls=1&ui_infos=1&ui_stop=1&ui_watermark=1`;
 

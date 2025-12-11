@@ -8,7 +8,7 @@ import type { Project } from '../store/projectStore';
 export class ProjectService {
   static async fetchAll(): Promise<Project[]> {
     const response = await fetch('/api/projects');
-    if (!response.ok) throw new Error('Failed to fetch projects');
+    if (!response.ok) {throw new Error('Failed to fetch projects');}
     const data = await response.json();
     return data.projects;
   }
@@ -19,7 +19,7 @@ export class ProjectService {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name }),
     });
-    if (!response.ok) throw new Error('Failed to create project');
+    if (!response.ok) {throw new Error('Failed to create project');}
     const data = await response.json();
     return data.project;
   }
@@ -28,6 +28,6 @@ export class ProjectService {
     const response = await fetch(`/api/projects/${id}`, {
       method: 'DELETE',
     });
-    if (!response.ok) throw new Error('Failed to delete project');
+    if (!response.ok) {throw new Error('Failed to delete project');}
   }
 }

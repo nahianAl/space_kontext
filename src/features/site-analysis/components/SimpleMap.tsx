@@ -78,7 +78,7 @@ export function SimpleMap({
   const isDrawingRef = useRef<boolean>(false);
   
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') {return;}
     
     const initMap = async () => {
       const L = await import('leaflet');
@@ -417,7 +417,7 @@ export function SimpleMap({
 
   // Handle existing boundary updates
   useEffect(() => {
-    if (!mapInstanceRef.current || !drawnItemsRef.current) return;
+    if (!mapInstanceRef.current || !drawnItemsRef.current) {return;}
     
     const loadBoundary = async () => {
       const L = await import('leaflet');

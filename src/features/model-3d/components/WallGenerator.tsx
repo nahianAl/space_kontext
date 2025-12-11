@@ -347,7 +347,7 @@ const RenderWalls = ({ projectId }: RenderWallsProps) => {
 
       // Default: Face selection (single click selects individual faces)
       const faceIndex = event.faceIndex;
-      if (faceIndex != null && event.object instanceof THREE.Mesh) {
+      if (faceIndex !== null && faceIndex !== undefined && event.object instanceof THREE.Mesh) {
         // Build face data to get all triangles that make up this face
         const faceData = buildFaceData(event.object, faceIndex, event.point);
         // Use the first triangle index as the representative faceIndex for this face
@@ -418,7 +418,7 @@ const RenderWalls = ({ projectId }: RenderWallsProps) => {
 
       // Always highlight individual faces on hover
       const faceIndex = event.faceIndex;
-      if (faceIndex != null && event.object instanceof THREE.Mesh) {
+      if (faceIndex !== null && faceIndex !== undefined && event.object instanceof THREE.Mesh) {
         const faceData = buildFaceData(event.object, faceIndex, event.point);
         const representativeFaceIndex = faceData.triangleIndices[0] ?? faceIndex;
         setHoveredFace({ wallId, faceIndex: representativeFaceIndex });
@@ -458,7 +458,7 @@ const RenderWalls = ({ projectId }: RenderWallsProps) => {
       event.nativeEvent.stopPropagation();
 
       const faceIndex = event.faceIndex;
-      if (faceIndex == null) {
+      if (faceIndex === null || faceIndex === undefined) {
         return;
       }
 
@@ -504,7 +504,7 @@ const RenderWalls = ({ projectId }: RenderWallsProps) => {
       }
 
       const faceIndex = event.faceIndex;
-      if (faceIndex == null) {
+      if (faceIndex === null || faceIndex === undefined) {
         return;
       }
 

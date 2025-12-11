@@ -44,12 +44,12 @@ export const useSketchfabStore = create<SketchfabStore>((set, get) => ({
 
       // Call our API route instead of Sketchfab directly
       const searchParams = new URLSearchParams();
-      if (params.q) searchParams.append('q', params.q);
-      if (params.page) searchParams.append('page', params.page.toString());
-      if (params.licenses) searchParams.append('licenses', params.licenses);
-      if (params.downloadable !== undefined) searchParams.append('downloadable', params.downloadable.toString());
-      if (params.sort) searchParams.append('sort', params.sort);
-      if (params.category) searchParams.append('category', params.category);
+      if (params.q) {searchParams.append('q', params.q);}
+      if (params.page) {searchParams.append('page', params.page.toString());}
+      if (params.licenses) {searchParams.append('licenses', params.licenses);}
+      if (params.downloadable !== undefined) {searchParams.append('downloadable', params.downloadable.toString());}
+      if (params.sort) {searchParams.append('sort', params.sort);}
+      if (params.category) {searchParams.append('category', params.category);}
 
       const response = await fetch(`/api/sketchfab/search?${searchParams.toString()}`);
 

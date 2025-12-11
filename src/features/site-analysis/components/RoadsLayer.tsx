@@ -39,7 +39,7 @@ export function RoadsLayer({
     }
 
     const renderLayer = async () => {
-      if (!map || !map.getContainer()) return;
+      if (!map || !map.getContainer()) {return;}
 
       const L = await import('leaflet');
 
@@ -138,7 +138,7 @@ export function RoadsLayer({
         // Manually create polylines to ensure they render as lines, not polygons
         // This is more reliable than L.geoJSON which might render closed LineStrings as polygons
         roadFeatures.forEach((feature) => {
-          if (!feature.geometry) return;
+          if (!feature.geometry) {return;}
 
           const highwayType = feature.properties?.highway;
           
@@ -205,9 +205,9 @@ export function RoadsLayer({
               if (feature.properties) {
                 const props = feature.properties;
                 let content = '<div><strong>Road</strong></div>';
-                if (props.name) content += `<div>Name: ${props.name}</div>`;
-                if (props.highway) content += `<div>Type: ${props.highway}</div>`;
-                if (props.ref) content += `<div>Ref: ${props.ref}</div>`;
+                if (props.name) {content += `<div>Name: ${props.name}</div>`;}
+                if (props.highway) {content += `<div>Type: ${props.highway}</div>`;}
+                if (props.ref) {content += `<div>Ref: ${props.ref}</div>`;}
                 polyline.bindPopup(content);
               }
               
@@ -248,9 +248,9 @@ export function RoadsLayer({
                 if (feature.properties) {
                   const props = feature.properties;
                   let content = '<div><strong>Road</strong></div>';
-                  if (props.name) content += `<div>Name: ${props.name}</div>`;
-                  if (props.highway) content += `<div>Type: ${props.highway}</div>`;
-                  if (props.ref) content += `<div>Ref: ${props.ref}</div>`;
+                  if (props.name) {content += `<div>Name: ${props.name}</div>`;}
+                  if (props.highway) {content += `<div>Type: ${props.highway}</div>`;}
+                  if (props.ref) {content += `<div>Ref: ${props.ref}</div>`;}
                   polyline.bindPopup(content);
                 }
                 

@@ -271,9 +271,9 @@ export const SettingsSidebar = () => {
 
               if (totalSelections > 0) {
                 const parts: string[] = [];
-                if (cadObjectCount > 0) parts.push(`${cadObjectCount} object${cadObjectCount !== 1 ? 's' : ''}`);
-                if (wallCount > 0) parts.push(`${wallCount} wall${wallCount !== 1 ? 's' : ''}`);
-                if (faceCount > 0) parts.push(`${faceCount} face${faceCount !== 1 ? 's' : ''}`);
+                if (cadObjectCount > 0) {parts.push(`${cadObjectCount} object${cadObjectCount !== 1 ? 's' : ''}`);}
+                if (wallCount > 0) {parts.push(`${wallCount} wall${wallCount !== 1 ? 's' : ''}`);}
+                if (faceCount > 0) {parts.push(`${faceCount} face${faceCount !== 1 ? 's' : ''}`);}
 
                 return (
                   <div className="mt-2 text-xs text-gray-400">

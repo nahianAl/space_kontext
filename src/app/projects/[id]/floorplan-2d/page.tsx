@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
+import { FeatureLayout } from '@/shared/components/layout/FeatureLayout';
 
 const Floorplan2DTab = dynamic(
   () => import('@/features/project-management/components/Floorplan2DTab'),
@@ -20,9 +21,11 @@ export default function Floorplan2DPage() {
   }
 
   return (
-    <div className="h-screen w-full">
-      <Floorplan2DTab projectId={projectId} />
-    </div>
+    <FeatureLayout featureType="floorplan-2d">
+      <div className="h-screen w-full">
+        <Floorplan2DTab projectId={projectId} />
+      </div>
+    </FeatureLayout>
   );
 }
 

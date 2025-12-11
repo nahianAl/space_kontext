@@ -14,7 +14,7 @@ const CreateProjectSchema = z.object({
  */
 async function getOrCreateUser(clerkUserId: string): Promise<string> {
   // Try to find existing user
-  let user = await prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { clerkId: clerkUserId },
     select: { id: true },
   });

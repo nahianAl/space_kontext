@@ -147,7 +147,7 @@ function applyAxisLock(
   axisLock: AxisLock,
   origin: THREE.Vector3
 ): THREE.Vector3 {
-  if (!axisLock) return point;
+  if (!axisLock) {return point;}
 
   const constrained = origin.clone();
 

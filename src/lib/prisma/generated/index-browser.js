@@ -149,6 +149,17 @@ exports.Prisma.ProjectScalarFieldEnum = {
   settings: 'settings'
 };
 
+exports.Prisma.ProjectFileScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  name: 'name',
+  type: 'type',
+  category: 'category',
+  url: 'url',
+  size: 'size',
+  uploadedAt: 'uploadedAt'
+};
+
 exports.Prisma.SiteAnalysisScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
@@ -292,6 +303,7 @@ exports.Prisma.ModelName = {
   User: 'User',
   UserSession: 'UserSession',
   Project: 'Project',
+  ProjectFile: 'ProjectFile',
   SiteAnalysis: 'SiteAnalysis',
   Floorplan: 'Floorplan',
   Model3D: 'Model3D',
