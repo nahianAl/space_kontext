@@ -1258,6 +1258,14 @@ export function convertDXFToKonvaGroups(
   let insertCount = 0;
   if (dxfData.entities) {
     for (const entity of dxfData.entities) {
+      if (entity.type === 'INSERT') {
+        console.log('[DXF Convert] Found INSERT entity:', {
+          type: entity.type,
+          name: entity.name,
+          handle: entity.handle,
+          allKeys: Object.keys(entity),
+        });
+      }
       if (entity.type === 'INSERT' && entity.name) {
         insertCount++;
         const blockDefinition = blockMap.get(entity.name);
