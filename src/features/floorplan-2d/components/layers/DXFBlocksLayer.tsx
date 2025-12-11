@@ -27,8 +27,7 @@ const renderKonvaShape = (shape: KonvaShapeData, key: string) => {
           key={key}
           points={lineData.points}
           stroke={lineData.stroke || '#000000'}
-          strokeWidth={1}
-          strokeScaleEnabled={false}
+          strokeWidth={lineData.strokeWidth || 1}
           closed={lineData.closed || false}
           listening={true}
           hitStrokeWidth={20}
@@ -45,8 +44,7 @@ const renderKonvaShape = (shape: KonvaShapeData, key: string) => {
           y={circleData.y}
           radius={circleData.radius}
           stroke={circleData.stroke || '#000000'}
-          strokeWidth={1}
-          strokeScaleEnabled={false}
+          strokeWidth={circleData.strokeWidth || 1}
           fill={circleData.fill || 'transparent'}
           listening={true}
           hitStrokeWidth={20}
@@ -61,8 +59,7 @@ const renderKonvaShape = (shape: KonvaShapeData, key: string) => {
           key={key}
           data={pathData.data}
           stroke={pathData.stroke || '#000000'}
-          strokeWidth={1}
-          strokeScaleEnabled={false}
+          strokeWidth={pathData.strokeWidth || 1}
           fill={pathData.fill || 'transparent'}
           listening={true}
           hitStrokeWidth={20}
