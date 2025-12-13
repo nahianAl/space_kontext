@@ -96,3 +96,4 @@ KIE_AI_API_KEY=ec2efd46a6cff257cdefb53ce5384dc5
 Monitor your KIE.AI usage at: https://kie.ai/api-key
 
 Each image edit counts as one API call to the Nano Banana Edit model.
+# Environment variable setup required
