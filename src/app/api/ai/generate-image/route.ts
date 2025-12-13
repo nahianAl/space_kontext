@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body = await request.json();
-    const { prompt, image_size, output_format } = body as GenerationInput;
+    const { prompt, image_urls, image_size, output_format } = body as GenerationInput;
 
     // Validate prompt
     if (!prompt || prompt.trim().length === 0) {
@@ -37,11 +37,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate image_urls
+    if (!image_urls || !Array.isArray(image_urls) || image_urls.length === 0) {
+      return NextResponse.json(
+        { error: 'At least one image URL is required for image editing' },
+        { status: 400 }
+      );
+    }
+
+    if (image_urls.length > 10) {
+      return NextResponse.json(
+        { error: 'Maximum 10 images allowed' },
+        { status: 400 }
+      );
+    }
+
     // Build request payload
     const payload: CreateTaskRequest = {
-      model: 'google/nano-banana',
+      model: 'google/nano-banana-edit',
       input: {
         prompt: prompt.trim(),
+        image_urls,
         output_format: output_format || 'png',
         image_size: image_size || '1:1',
       },

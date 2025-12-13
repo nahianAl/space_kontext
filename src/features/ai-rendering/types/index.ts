@@ -26,13 +26,14 @@ export type TaskStatus = 'waiting' | 'success' | 'fail';
 // Generation input parameters
 export interface GenerationInput {
   prompt: string;
+  image_urls: string[]; // Required: URLs of input images (up to 10, max 10MB each)
   output_format?: OutputFormat;
   image_size?: ImageSize;
 }
 
 // API request to create generation task
 export interface CreateTaskRequest {
-  model: 'google/nano-banana';
+  model: 'google/nano-banana-edit';
   input: GenerationInput;
   callBackUrl?: string;
 }

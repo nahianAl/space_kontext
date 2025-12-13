@@ -24,16 +24,18 @@ interface TaskStatusResult {
 }
 
 /**
- * Generate an image using Nano Banana
+ * Edit an image using Nano Banana Edit
  */
 export async function generateImage(
   prompt: string,
+  imageUrls: string[],
   imageSize: ImageSize = '1:1',
   outputFormat: OutputFormat = 'png'
 ): Promise<GenerateImageResult> {
   try {
     const input: GenerationInput = {
       prompt,
+      image_urls: imageUrls,
       image_size: imageSize,
       output_format: outputFormat,
     };

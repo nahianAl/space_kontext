@@ -24,9 +24,9 @@ export default function RenderPage() {
       <div className="h-full overflow-auto bg-background">
         {/* Header */}
         <div className="border-b border-border bg-muted/30 px-6 py-4">
-          <h1 className="text-2xl font-bold">AI Rendering</h1>
+          <h1 className="text-2xl font-bold">AI Image Editing</h1>
           <p className="text-sm text-muted-foreground">
-            Generate architectural visualizations with Gemini 2.5 Flash (Nano Banana)
+            Transform architectural images with AI using Gemini 2.5 Flash (Nano Banana Edit)
           </p>
         </div>
 

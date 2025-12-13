@@ -25,10 +25,12 @@ function JobItem({ job }: { job: RenderJob }) {
 
   const getStatusText = () => {
     switch (job.status) {
+      case 'uploading':
+        return 'Uploading image...';
       case 'pending':
         return 'Creating task...';
       case 'waiting':
-        return 'Generating...';
+        return 'Editing image...';
       case 'success':
         return 'Complete';
       case 'fail':

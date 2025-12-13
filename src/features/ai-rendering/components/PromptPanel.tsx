@@ -28,6 +28,7 @@ export function PromptPanel() {
     imageSize,
     outputFormat,
     isGenerating,
+    sourceImage,
     setPrompt,
     setImageSize,
     setOutputFormat,
@@ -39,10 +40,11 @@ export function PromptPanel() {
       await createJob();
     } catch (error) {
       console.error('Generation failed:', error);
+      alert(error instanceof Error ? error.message : 'Generation failed');
     }
   };
 
-  const isValid = prompt.trim().length > 0;
+  const isValid = prompt.trim().length > 0 && sourceImage !== null;
 
   return (
     <Card className="p-6">
@@ -56,7 +58,7 @@ export function PromptPanel() {
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Describe the image you want to generate... (e.g., 'A modern architectural building with glass facade at sunset')"
+          placeholder="Describe how to transform your uploaded image... (e.g., 'Transform this building to sunset lighting with warm tones', 'Add photorealistic materials and shadows', 'Convert to watercolor architectural sketch')"
           className="min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           maxLength={5000}
           disabled={isGenerating}
@@ -119,12 +121,14 @@ export function PromptPanel() {
         size="lg"
       >
         <Sparkles className="mr-2 h-5 w-5" />
-        {isGenerating ? 'Generating...' : 'Generate Image'}
+        {isGenerating ? 'Processing...' : 'Edit Image with AI'}
       </Button>
 
       {!isValid && (
         <p className="mt-2 text-center text-xs text-destructive">
-          Please enter a prompt to generate an image
+          {!sourceImage
+            ? 'Please upload an image first'
+            : 'Please enter a prompt to describe how to edit the image'}
         </p>
       )}
     </Card>

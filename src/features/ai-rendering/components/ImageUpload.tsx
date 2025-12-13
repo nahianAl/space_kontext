@@ -7,7 +7,7 @@ import { Card } from '@/shared/components/ui/card';
 import { useRenderStore } from '../store/renderStore';
 
 export function ImageUpload() {
-  const { sourceImage, sourceImagePreview, setSourceImage } = useRenderStore();
+  const { sourceImage, sourceImagePreview, setSourceImage, uploadProgress } = useRenderStore();
 
   const handleDrop = useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
@@ -40,7 +40,9 @@ export function ImageUpload() {
 
   return (
     <Card className="p-6">
-      <h3 className="mb-4 text-lg font-semibold">Source Image (Optional)</h3>
+      <h3 className="mb-4 text-lg font-semibold">
+        Source Image <span className="text-destructive">*</span>
+      </h3>
 
       {!sourceImagePreview ? (
         <div
@@ -88,8 +90,8 @@ export function ImageUpload() {
         </div>
       )}
 
-      <p className="mt-4 text-xs text-muted-foreground">
-        Note: Image uploads are currently for reference only. AI generation will be text-to-image based on your prompt.
+      <p className="mt-4 text-xs text-destructive font-medium">
+        * Required: Upload an image to edit with AI. Your prompt will describe how to transform this image.
       </p>
     </Card>
   );

@@ -67,10 +67,14 @@ export const useRenderStore = create<RenderState>((set, get) => ({
 
   createJob: async () => {
     const state = get();
-    const { prompt, imageSize, outputFormat, sourceImagePreview } = state;
+    const { prompt, imageSize, outputFormat, sourceImage, sourceImagePreview } = state;
 
     if (!prompt.trim()) {
       throw new Error('Prompt is required');
+    }
+
+    if (!sourceImage) {
+      throw new Error('Source image is required for editing');
     }
 
     // Create new job
@@ -82,10 +86,11 @@ export const useRenderStore = create<RenderState>((set, get) => ({
       prompt,
       specifications: {
         prompt,
+        image_urls: [], // Will be set after upload
         image_size: imageSize,
         output_format: outputFormat,
       },
-      status: 'pending',
+      status: 'uploading',
       resultUrls: [],
       error: null,
       createdAt: Date.now(),
@@ -97,15 +102,49 @@ export const useRenderStore = create<RenderState>((set, get) => ({
       jobs: [job, ...state.jobs],
       activeJobId: job.id,
       isGenerating: true,
+      uploadProgress: 0,
     }));
 
     try {
-      // Call API to create task
+      // Step 1: Upload source image to R2/S3 to get public URL
+      const formData = new FormData();
+      formData.append('file', sourceImage);
+      formData.append('projectId', job.projectId || 'temp');
+      formData.append('category', 'exports');
+
+      set({ uploadProgress: 10 });
+
+      const uploadResponse = await fetch('/api/files/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to upload source image');
+      }
+
+      const uploadData = await uploadResponse.json();
+      const imageUrl = uploadData.url;
+
+      set({ uploadProgress: 50 });
+
+      // Update job with uploaded image URL
+      set((state) => ({
+        jobs: state.jobs.map((j) =>
+          j.id === job.id
+            ? { ...j, status: 'pending' as const, sourceImageUrl: imageUrl }
+            : j
+        ),
+        uploadProgress: 60,
+      }));
+
+      // Step 2: Call AI API to create generation task
       const response = await fetch('/api/ai/generate-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt,
+          image_urls: [imageUrl], // Use uploaded image URL
           image_size: imageSize,
           output_format: outputFormat,
         }),
@@ -118,6 +157,8 @@ export const useRenderStore = create<RenderState>((set, get) => ({
 
       const data = await response.json();
 
+      set({ uploadProgress: 100 });
+
       // Update job with taskId
       set((state) => ({
         jobs: state.jobs.map((j) =>
@@ -125,6 +166,7 @@ export const useRenderStore = create<RenderState>((set, get) => ({
             ? { ...j, taskId: data.taskId, status: 'waiting' as const }
             : j
         ),
+        uploadProgress: 0,
       }));
 
       // Start polling
