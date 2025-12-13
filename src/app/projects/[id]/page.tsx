@@ -35,8 +35,8 @@ const features = [
   },
   {
     id: 'render',
-    title: 'Render (Coming Soon)',
-    description: 'High-quality rendering and visualization tools for your architectural designs.',
+    title: 'AI Rendering',
+    description: 'Generate architectural visualizations with AI using Gemini 2.5 Flash (Nano Banana).',
     icon: Palette,
     color: 'bg-architectural-neutral-500/10 text-architectural-neutral-500',
   },
@@ -95,15 +95,12 @@ export default function ProjectHub() {
         <div className="grid gap-6 md:grid-cols-2">
           {features.map((feature) => {
             const Icon = feature.icon;
-            const isComingSoon = feature.id === 'render';
 
             return (
               <Card
                 key={feature.id}
-                className={`architectural-card transition-shadow ${
-                  isComingSoon ? 'opacity-60' : 'cursor-pointer hover:shadow-lg'
-                }`}
-                onClick={() => !isComingSoon && router.push(`/projects/${projectId}/${feature.id}` as any)}
+                className="architectural-card cursor-pointer transition-shadow hover:shadow-lg"
+                onClick={() => router.push(`/projects/${projectId}/${feature.id}` as any)}
               >
                 <CardHeader>
                   <div className="flex items-center space-x-4">
@@ -119,13 +116,12 @@ export default function ProjectHub() {
                 <CardContent>
                   <Button
                     className="w-full"
-                    disabled={isComingSoon}
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (!isComingSoon) router.push(`/projects/${projectId}/${feature.id}` as any);
+                      router.push(`/projects/${projectId}/${feature.id}` as any);
                     }}
                   >
-                    {isComingSoon ? 'Coming Soon' : `Open ${feature.title}`}
+                    Open {feature.title}
                   </Button>
                 </CardContent>
               </Card>
